@@ -1,0 +1,42 @@
+<html>
+<head>
+<link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<!--   <script>-->
+<!--        $(document).ready(function(){-->
+<!--        $(".submit").click(function(){-->
+<!--        $(".loading").show();-->
+<!--        $(".login-container").hide();-->
+<!--        $(".hr_mainpage").hide();-->
+<!--        });-->
+<!--});-->
+<!-- </script>-->
+</head>
+<body>
+<div class="licenseinfo">
+    <h5 style="color:tomato;">license expires on: {{licenseinfo}} <br>systeminfo:  {{systeminfo}} </h5>
+</div>
+<form method="post" action="/login">
+<img class="btnimg" src="{{ url_for('static', path='images/kh_head.png') }}" alt="" width="500" height="100" /><br><br>
+ <div class="login-container">
+    <label for="username"><b>Username : </b></label>
+    <input type="text" placeholder="Enter Email_id" name="username" required><br><br>
+    <label for="password"><b>Password : </b></label>
+    <input type="password" placeholder="Enter Password" name="password" required><br>
+    <h4 style="color:Red;">{{msg}}</h4>
+    <button  style = 'background: #D5DBDB;width: 100px;height: 30px;font-weight: 600;' id="submit" type="submit" >Login</button>&emsp;
+
+<!--     <span class="forgot-password">-->
+<!--    <a href="forgot" title="Forgot Password" id="link-reset">Forgot Password?</a>-->
+<!--  </span>-->
+  </div>
+</form>
+
+
+<img  hidden id = "loading" class = "loading" src="{{ url_for('static', path='images/loading.gif') }}"/>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body >
+<div>
+<form action="/logout" method="get">
+   <button style="top:30px;right:20px;width:100px;"  class="button-all"  >Logout</button>
+</form>
+</div>
+<div class="licenseinfo">
+    <h5 style="color:tomato;">license expires on: {{licenseinfo}} <br>systeminfo:  {{systeminfo}} </h5>
+</div>
+<div class="header">
+  <h1>KAMALAM HOSPITAL</h1>
+</div>
+<div class="patienticon">
+<!--    <a href="staffs">Staffs</a>&emsp;&emsp;&emsp;&emsp;-->
+<!--    <a href="appointment">Appoinment</a>&emsp;&emsp;&emsp;&emsp;-->
+<!--    <a href="inpatient">Inpatient</a>&emsp;&emsp;&emsp;&emsp;-->
+<!--    <a href="reports">Reports</a>-->
+
+
+    <a href="appointment"><img class="btnimg1" src="{{ url_for('static', path='images/app.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
+    <a href="inpatient"><img class="btnimg1" src="{{ url_for('static', path='images/inpat.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
+    <a href="staffs"><img class="btnimg1" src="{{ url_for('static', path='images/staffs.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
+    <a href="reports"><img class="btnimg1" src="{{ url_for('static', path='images/report.png') }}"  /></a>
+</div>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+</html>

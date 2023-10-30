@@ -1,0 +1,206 @@
+/* Header/Logo Title */
+.header {
+  padding: 1px;
+  text-align: center;
+  background: #84F089;
+  color: black;
+  font-size: 15px;
+}
+.licenseinfo {
+  position: fixed;
+  bottom: 2px;
+  left:10px;
+  width: 500px;
+}
+.patienticon{
+padding: 120px;
+}
+.buttonsbar1 {
+  padding: 25px;
+  text-align: center;
+  background: #84F089;
+  color: white;
+  font-size: 15px;
+}
+.button-all {
+  background-color: #84F089;
+  border-radius: 8px;
+  top:15px;
+  border-width: 0;
+  color: #333333;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 10px 12px;
+  text-align: center;
+  transition: all 200ms;
+  vertical-align: baseline;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position: fixed;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+display: none;
+        position: fixed;
+        left: 50%;
+        top: 0%;
+        transform: translate(-50%, 5%);
+        border: 3px solid #999999;
+        z-index: 9;
+}
+.form-popup1,.form-popup-empid {
+display: none;
+        position: fixed;
+        left: 50%;
+        top: 0%;
+        transform: translate(-50%, 5%);
+        border: 3px solid #999999;
+        z-index: 9;
+}
+.form-popup-update {
+display: none;
+        position: fixed;
+        left: 50%;
+        top: 0%;
+        transform: translate(-50%, 5%);
+        border: 3px solid #999999;
+        z-index: 9;
+}
+.error-popup {
+display: none;
+        position: fixed;
+        left: 50%;
+        top: 20%;
+        transform: translate(-50%, 5%);
+        border: 3px solid #999999;
+        z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 500px;
+  padding: 25px;
+  background: #eee;
+}
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  width: 25%;
+  margin-bottom:15px;
+  opacity: 0.9;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+
+/* The Close Button */
+.btncancel {
+  color: #aaaaaa;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.btncancel:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.appointments{
+  position: absolute;
+  top: 5%;
+  left:3%;
+  width:1000px;
+}
+table{
+   font-size:13px;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 6px;
+}
+tr:nth-child(even){
+  background-color: #f2f2f2;;
+}
+
+/* Box styles */
+.myBox {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 1200px;
+height: 450px;
+transform: translate(-50%, -50%);
+font: 20px/30px sans-serif;
+overflow: scroll;
+}
+
+.login-container {
+padding-top: 100px;
+padding-right: 500px;
+padding-left: 500px;
+}
+.btnimg {
+  position: absolute;
+  left: 350px;
+  top: 12%;
+  transform: translateY(-50%);
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  /* 1/2 of the height and width of the actual gif */
+  margin: -16px 0 0 -16px;
+  z-index: 100;
+}
+.copyright {
+ position: fixed;
+  bottom: 1%;
+  right: 2%;
+}
+.logoutdash{
+  position: fixed;
+  top: 40px;
+  right:50px;
+  width: 180px;
+}
+.test{
+  position: absolute;
+  top: 15%;
+  left:2%;
+  width:11
+  }
+

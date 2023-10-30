@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>outpatient</title>
+  <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        $(".form-popup").hide();
+        $(".form-popup1").hide();
+        $("#bookappoinment").click(function(){
+        $(".form-popup").show();
+        $(".form-popup1").hide();
+        });
+        $(".btncancel").click(function(){
+        $(".form-popup").hide();
+        $(".form-popup1").hide();
+        });
+        $("#printreceipt").click(function(){
+        $(".form-popup").hide();
+        $(".form-popup1").show();
+        });
+});
+ </script>
+</head>
+<body >
+<div class = 'buttonsbar'>
+<form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all" >Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:450px;width:100px;"  class="button-all"  >logout</button>
+</form>
+<button style="left:140px;width: 130px;" id='printreceipt' class="button-all">Print Recepit</button>
+<button style="left:280px;width: 160px;"  id='bookappoinment' class="button-all" onclick="openForm()">Book Appoinment</button>
+</div>
+
+<div class = "error-popup">
+    <h5>asdfghjkl</h5>
+</div>
+
+    <div class="form-popup" id="myForm">
+  <form action="/createappointment" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<table id = "table_data1" style="width:100%">
+ <tr id="TR1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Patient Name :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="name" placeholder="Enter name" name="name" required size="100">
+    </td>
+ </tr>
+  <tr id="TR2" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Age:</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="age" placeholder="Enter age" name="age" required size="2">
+    </td>
+  </tr>
+    <tr id="TR3" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Sex :</b></td>
+    <td class="col" style="font-size: 20px" >
+         <select style="width: 210px;height:20px" id="sex" name="sex">
+            <option value="None">None</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </td>
+  </tr>
+     <tr id="TR4" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Guardian :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="guardian" placeholder="Enter guardian" name="guardian" required size="100">
+    </td>
+  </tr>
+  <tr id="TR5" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Address :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="address" placeholder="Enter address" name="address" required size="50">
+    </td>
+  </tr>
+   <tr id="TR6" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Phone :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="phone" placeholder="Enter phone" name="phone" required size="10">
+    </td>
+  </tr>
+   <tr id="TR7" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Doctor :</b></td>
+    <td class="col" style="font-size: 20px" >
+     <select style="width: 210px;height:20px" id="dr" name="dr">
+            <option value="Dr.Kamalam">Dr.Kamalam</option>
+            <option value="Dr.Subramaniyam">Dr.Subramaniyam</option>
+            <option value="Dr.Sugasree">Dr.Sugasree</option>
+        </select>
+    </td>
+  </tr>
+    <tr id="TR8" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Department :</b></td>
+    <td class="col" style="font-size: 20px" >
+     <select style="width: 210px;height:20px" id="dept" name="dept">
+            <option value="General Medicine">General Medicine</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Nephrology">Nephrology</option>
+        </select>
+    </td>
+      </tr>
+   <tr id="TR9" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Consulting Fee :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="consfee" name="consfee" required size="10">
+    </td>
+  </tr>
+       <tr id="TR10" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Medical History :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="medhist" name="medhist" required size="50">
+    </td>
+  </tr> <br>
+ </table><br><br>
+       <button type="submit" class="btn">Save</button>
+<!--      <button type="button" class="btncancel" onclick="closeForm()">Close</button>-->
+  </form>
+</div>
+<div class="form-popup1" id="myForm1">
+     <form action="/printreceipt" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+         <table id = "table_data2" style="width:100%">
+ <tr id="Tk1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Receipt No :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="receiptno" placeholder="receipt no" name="receiptno" required size="9">
+    </td>
+  </tr>
+</table><br>
+         <button class="btn">Print</button>
+     </form>
+</div>
+<!--<h4>Total Patients : {{total_patients}}</h4>-->
+<!-- <div class="myBox">-->
+<!--    <div  align="left" class="appointments">{{data|safe}}</div>-->
+<!--</div>-->
+<div class="test">{{data|safe}}</div>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+
+</body>
+</html>

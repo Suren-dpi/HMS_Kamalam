@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>outpatient</title>
+  <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        $(".form-popup").hide();
+        $(".open-button").click(function(){
+        $(".form-popup").show();
+        });
+        $(".btncancel").click(function(){
+        $(".form-popup").hide();
+        $(".form-popup1").hide();
+        });
+        $("#cashreport").click(function(){
+        $(".form-popup1").show();
+        });
+});
+ </script>
+</head>
+<body>
+<div class = 'buttonsbar'>
+    <form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:290px;width: 100px;"  class="button-all" >logout</button>
+</form>
+<button  style="left:150px;width: 120px;"  id='cashreport' class="button-all" >Cash Report</button>
+</div>
+
+
+<div class="form-popup1" id="myForm1">
+     <form action="/cashreport" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+         <table id = "table_data2" style="width:100%">
+ <tr id="Tk1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Date :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="date" id="date"  name="date" required>
+    </td>
+  </tr>
+</table><br>
+        <button class="btn">Submit</button>
+</form>
+</div>
+<!--<h4>Total Patients : {{total_patients}}</h4>-->
+ <div  align="left" class="appointments">{{data|safe}}</div>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        $(".get_date").hide();
+        $(".get_month").hide();
+        $(".get_year").hide();
+        var mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        for (i = new Date().getFullYear(); i > 2020; i--)
+        {
+            $('#yearpicker').append($('<option />').val(i).html(i));
+        }
+         for (i = 0; i < 12 ; i++)
+        {
+            $('#monthpicker').append($('<option />').val(mon[i]).html(mon[i]));
+        }
+        $('#daily').click(function() {
+   if($('#daily').is(':checked')) { $(".get_date").show(); $(".get_month").hide(); $(".get_year").hide(); }
+});
+$('#monthly').click(function() {
+   if($('#monthly').is(':checked')) { $(".get_date").hide(); $(".get_month").show(); $(".get_year").hide();}
+});
+$('#yearly').click(function() {
+   if($('#yearly').is(':checked')) { $(".get_date").hide(); $(".get_month").hide(); $(".get_year").show();}
+});
+        });
+
+ </script>
+
+</head>
+<body>
+
+
+  <div class="inp_report">
+      <form name="myForm" method="post" action="/get_reports">
+          <div>
+    <label for="dr">Select Doctor : </label>
+      <select style="width: 210px;height:20px" id="dr" name="dr">
+            <option value="{{doctors[0]}}">{{doctors[0]}}</option>
+            <option value="{{doctors[1]}}">{{doctors[1]}}</option>
+            <option value="{{doctors[2]}}">{{doctors[2]}}</option>
+        </select>
+</div>
+   <input type="radio" id="daily" name="radio" value="daily" onclick="myFunction()">
+<label for="daily">Daily</label>
+ <input type="radio" id="monthly" name="radio" value="monthly" onclick="myFunction()">
+<label for="monthly">Monthly</label>
+           <input type="radio" id="yearly" name="radio" value="yearly" onclick="myFunction()">
+<label for="yearly">Yearly</label>
+
+<div id = "get_date" class="get_date">
+<label for="datepicker"><b>Select Date :</b></label>
+<input type="date" id="datepicker" name="datepicker">
+</div>
+<div id = "get_month" class="get_month">
+    <label for="monthpicker"><b>Select Month :</b></label>
+ <select name="monthpicker" id="monthpicker"></select>
+</div>
+<div id = "get_year" class="get_year">
+    <label for="yearpicker"><b>Select Year :</b></label>
+    <select name="yearpicker" id="yearpicker"></select>
+</div >
+<input type="submit" value="Submit">
+</form>
+  </div>
+<div>{{data}}</div>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+
+</html>

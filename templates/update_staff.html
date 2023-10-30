@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+
+});
+ </script>
+
+</head>
+<body>
+<div class='error_msg'>{{error}}</div>
+<div class = 'buttonsbar'>
+<form action="/staffs" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Back</button>
+</form>
+<!--<form action="/logout" method="get">-->
+<!--   <button style="left:140px;width: 120px;"  class="button-all" >logout</button>-->
+<!--</form>-->
+<!--</div>-->
+<div class="form-popup-update1"  style="padding-top:50px;padding-left:50px" id="myForm1">
+<form action="/updatestaff" method="post"   >
+<!--<span class="btncancel">&#10006;</span>-->
+<table id = "table_data1" style="width:50%">
+     <tr id="TR0" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Emp ID :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="empid" name="empid"  size="100" value="{{empdata[0]}}">
+    </td>
+ </tr>
+ <tr id="TR11" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Staff Name :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="name" name="name"  size="100" value="{{empdata[1]}}">
+    </td>
+ </tr>
+      <tr id="TR2" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Age:</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="age"  name="age"  size="2" value="{{empdata[2]}}">
+    </td>
+  </tr>
+    <tr id="TR3" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Sex :</b></td>
+    <td class="col" style="font-size: 20px" >
+         <select style="width: 210px;height:20px" id="sex" name="sex">
+            <option value="{{empdata[3]}}">{{empdata[3]}}</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </td>
+  </tr>
+        <tr id="TR4" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Designation :</b></td>
+    <td class="col" style="font-size: 20px" >
+<!--        <input style="width: 200px;" type="text" id="des" placeholder="Enter designation" name="des" required size="15">-->
+        <select style="width: 210px;height:20px" id="des" name="des">
+            <option value="{{empdata[4]}}">{{empdata[4]}}</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Compounder">Compounder</option>
+            <option value="OfficeAssistance">OfficeAssistance</option>
+            <option value="HouseKeeping">HouseKeeping</option>
+            <option value="Watchman">Watchman</option>
+            <option value="LabAssistant">LabAssistant</option>
+            <option value="Pharmacist">Pharmacist</option>
+        </select>
+    </td>
+  </tr>
+  <tr id="TR5" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Address :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="address"  value="{{empdata[5]}}" name="address" required size="50">
+    </td>
+  </tr>
+   <tr id="TR6" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Phone :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="phone"  value="{{empdata[6]}}" name="phone" required size="10">
+    </td>
+  </tr>
+   <tr id="TR7" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Joining Date :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="date" id="jdate"  name="jdate"  value="{{empdata[7]}}">
+    </td>
+  </tr>
+       <tr id="TR8" >
+    <td class="col" style="font-size: 15px" ><b>Exit Date :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="date" id="edate"  name="edate"  value="{{empdata[8]}}">
+    </td>
+  </tr>
+ </table><br><br>
+       <button type="submit"  style="top:400px;width: 100px;" class="button-all">Save</button>
+<!--      <button type="button" class="btncancel" onclick="closeForm()">Close</button>-->
+    </form>
+        </div>
+</body>
+</html>

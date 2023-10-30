@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>outpatient</title>
+  <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+</head>
+<body>
+<div class = 'buttonsbar'>
+<form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:330px;width: 100px;"  class="button-all"  >logout</button>
+</form>
+
+<form action="/dissum" method="get">
+    <button style="left:140px;width: 180px;"  class="button-all">Discharge Summary</button>
+</form>
+
+<!--<button class="open-button" onclick="openForm()">Admission</button>-->
+</div>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+</html>

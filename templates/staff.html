@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        var x = $('#days').text();
+        if (x.length != 0){
+        alert(x);
+        }
+        $(".form-popup").hide();
+        $(".form-popup-empid").hide();
+        $("#addstaff").click(function(){
+        $(".form-popup").show();
+        $(".form-popup-empid").hide();
+        });
+        $("#updatestaff").click(function(){
+        $(".form-popup").hide();
+        $(".form-popup1").hide();
+        $(".form-popup-empid").show();
+        });
+        $(".btncancel").click(function(){
+        $(".form-popup").hide();
+        $(".form-popup-empid").hide();
+        });
+});
+ function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
+}
+
+function export_table_to_csv() {
+var d = new Date();
+var hh = d.getHours()
+var mm = d.getMinutes()
+var ss = d.getSeconds();
+var month = d.getMonth()+1;
+var day = d.getDate();
+var filename = "DCEMIReplicaCount"+d.getFullYear().toString()+
+    (month<10 ? '0' : '') + month.toString()+
+    (day<10 ? '0' : '') + day.toString()+(hh<10 ? '0' : '') + hh.toString()+(mm<10 ? '0' : '') + mm.toString()+
+    (ss<10 ? '0' : '') + ss.toString();
+	var csv = [];
+	var rows = document.querySelectorAll("table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+		var row = [], cols = rows[i].querySelectorAll("td, th");
+
+        for (var j = 0; j < cols.length; j++)
+            row.push(cols[j].innerText);
+
+		csv.push(row.join(","));
+	}
+
+    // Download CSV
+    download_csv(csv.join("\n"), filename);
+}
+
+document.querySelector("button").addEventListener("click", function () {
+    var html = document.querySelector("table").outerHTML;
+
+});
+ </script>
+
+</head>
+<body>
+<div id="days" hidden>{{error}}</div>
+<div class = 'buttonsbar'>
+<form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:530px;width: 120px;"  class="button-all" >logout</button>
+</form>
+
+<button style="left:140px;width: 120px;"  id='addstaff' class="button-all" onclick="openForm()">Add Staff</button>
+
+    <button style="left:270px;width: 120px;"  id='updatestaff' class="button-all" onclick="openForm()">Update Staff</button>
+<form action="/liststaff" method="get">
+    <button style="left:400px;width: 120px;"  id='liststaff' class="button-all" >List Staff</button>
+</form>
+
+</div>
+<div class="form-popup" id="myForm">
+  <form action="/addstaff" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<table id = "table_data1" style="width:100%">
+ <tr id="TR1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Staff Name :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="name" placeholder="Enter name" name="name" required size="100">
+    </td>
+ </tr>
+  <tr id="TR2" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Age:</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="age" placeholder="Enter age" name="age" required size="2">
+    </td>
+  </tr>
+    <tr id="TR3" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Sex :</b></td>
+    <td class="col" style="font-size: 20px" >
+         <select style="width: 210px;height:20px" id="sex" name="sex">
+            <option value="None">None</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </td>
+  </tr>
+       <tr id="TR4" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Designation :</b></td>
+    <td class="col" style="font-size: 20px" >
+<!--        <input style="width: 200px;" type="text" id="des" placeholder="Enter designation" name="des" required size="15">-->
+        <select style="width: 210px;height:20px" id="des" name="des">
+            <option value="Nurse">Nurse</option>
+            <option value="Compounder">Compounder</option>
+            <option value="OfficeAssistance">OfficeAssistance</option>
+            <option value="HouseKeeping">HouseKeeping</option>
+            <option value="Watchman">Watchman</option>
+            <option value="LabAssistant">LabAssistant</option>
+            <option value="Pharmacist">Pharmacist</option>
+        </select>
+    </td>
+  </tr>
+  <tr id="TR5" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Address :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="address" placeholder="Enter address" name="address" required size="50">
+    </td>
+  </tr>
+   <tr id="TR6" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Phone :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="phone" placeholder="Enter phone" name="phone" required size="10">
+    </td>
+  </tr>
+   <tr id="TR7" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Joining Date :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="date" id="jdate"  name="jdate" required>
+    </td>
+  </tr>
+       <tr id="TR8" >
+    <td class="col" style="font-size: 15px" ><b>Exit Date :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="date" id="edate"  name="edate" >
+    </td>
+  </tr>
+ </table><br><br>
+       <button type="submit" class="btn">Save</button>
+<!--      <button type="button" class="btncancel" onclick="closeForm()">Close</button>-->
+
+  </form>
+</div>
+
+
+<div class="form-popup-empid" id="myForm1">
+  <form action="/getstaff" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<table id = "table_data21" style="width:100%">
+ <tr id="TR211" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Emp Id :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="empid" placeholder="Enter name" name="empid" required size="100">
+    </td>
+  </table><br><br>
+       <button type="submit" class="btn" >Save</button>
+<!--      <button type="button" class="btncancel" onclick="closeForm()">Close</button>-->
+  </form>
+</div>
+
+<!-- <div id ="myb" class="myBox">-->
+
+<!--    <div  align="left" class="appointments">-->
+
+<!--        {{data|safe}}</div>-->
+<!--</div>-->
+<div class="test">{{data|safe}}</div>
+
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+</html>

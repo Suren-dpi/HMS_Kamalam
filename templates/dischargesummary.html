@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+<div class = 'buttonsbar'>
+<form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:280px;width: 100px;"  class="button-all"  >logout</button>
+</form>
+</div>
+<form>
+<div style="padding-left: 70px;" onsubmit="submit.disabled = true">
+    <form name ='myForm' id ='myForm' method="post" action="">
+         <br><br>   <button id="submit" style="left:150px;width: 100px;"  class="button-all"  type="submit" formmethod='post' formaction="/print_dissum" >Submit</button><br><br><br><br>
+            <table id = "table_data1"  style="width:65%">
+ <tr id="TR1" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>PATIENT NAME :</b></td>
+    <td class="col" style="font-size: 13px" >
+        <input style="width: 500px;" type="text" id="pname" name="pname" placeholder="Patient Name.." required size="50">
+    </td>
+  </tr>
+   <tr id="TR2" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>AGE :</b></td>
+    <td class="col" style="font-size: 13px" >
+        <input style="width: 500px;"  type="text" id="age" name="age" placeholder="Age.." required>
+    </td>
+  </tr>
+<tr id="TR3" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>SEX :</b></td>
+    <td class="col" style="font-size: 13px" >
+    <input style="width: 500px;"  type="text" id="sex" name="sex" placeholder="Sex.."required>
+    </td>
+  </tr>
+<tr id="TR4" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>ROOM NO :</b></td>
+    <td class="col" style="font-size: 13px" >
+       <input style="width: 500px;"  type="text" id="roomno" name="roomno" placeholder="Room No.." required>
+    </td>
+  </tr>
+<tr id="TR5" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DATE OF ADMISSION :</b></td>
+    <td class="col" style="font-size: 13px" >
+       <input style="width: 500px;"  type="date" id="doa" name="doa"  required>
+    </td>
+  </tr>
+ <tr id="TR6" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DATE OF DISCHARGE :</b></td>
+    <td class="col" style="font-size: 13px" >
+       <input style="width: 500px;"  type="date" id="dod" name="dod"  required>
+    </td>
+  </tr>
+  <tr id="TR7" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>CONSULTED DOCTOR :</b></td>
+    <td class="col" style="font-size: 13px" >
+       <input style="width: 500px;"  type="text" id="cdr" name="cdr" placeholder="Consulted Doctor.." required>
+    </td>
+  </tr>
+    <tr id="TR8" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DIAGNOSIS :</b></td>
+   <td class="col" style="font-size: 13px" >
+   <textarea name="diagnosis" placeholder="DIAGNOSIS..max 480 char.." maxlength="480" style="font-family:sans-serif;font-size:1.0em;height:125px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+    <tr id="TR9" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>H/O PRESENT ILLNESS :</b></td>
+   <td class="col" style="font-size: 13px" >
+   <textarea name="pill" placeholder="H/O PRESENT ILLNESS..max 480 char.."  maxlength="480" style="font-family:sans-serif;font-size:1.0em;height:125px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+     <tr id="TR10" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>CO-MORBIT ILLNESS :</b></td>
+   <td class="col" style="font-size: 13px" >
+   <textarea name="mill" placeholder="CO-MORBIT ILLNESS..max 240 char.." maxlength="240" style="font-family:sans-serif;font-size:1.0em;height:75px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+     <tr id="TR11" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>PAST HISTORY :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="pasthist" placeholder="PAST HISTORY..max 240 char.." maxlength="240" style="font-family:sans-serif;font-size:1.0em;height:75px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+     <tr id="TR12" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>FAMILY HISTORY :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="famhist" placeholder="FAMILY HISTORY..max 240 char.." maxlength="240" style="font-family:sans-serif;font-size:1.0em;height:75px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+      <tr id="TR13" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>CLINICAL EXAMINATION :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="cliex" placeholder="CLINICAL EXAMINATION..max 320 char.." maxlength="320" style="font-family:sans-serif;font-size:1.0em;height:100px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+       <tr id="TR14" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>INVESTIGATION :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="invest" placeholder="INVESTIGATION..max 240 char.." maxlength="240" style="font-family:sans-serif;font-size:1.0em;height:75px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+         <tr id="TR15" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>COURSE IN THE HOSPITAL :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="cih" placeholder="COURSE IN THE HOSPITAL..max 480 char.." maxlength="480" style="font-family:sans-serif;font-size:1.0em;height:125px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+           <tr id="TR16" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>CONDITION AT DISCHARGE :</b></td>
+   <td class="col" style="font-size: 13px" >
+   <textarea name="cad" placeholder="CONDITION AT DISCHARGE..max 320 char.." maxlength="320" style="font-family:sans-serif;font-size:1.0em;height:100px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+  <tr id="TR17" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DISCHARGE ADVICE :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="da" placeholder="DISCHARGE ADVICE..max 720 char.." maxlength="720" style="font-family:sans-serif;font-size:1.0em;height:175px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+ <tr id="TR18" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>REVIEW :</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="review" placeholder="REVIEW..max 240 char.." maxlength="240" style="font-family:sans-serif;font-size:1.0em;height:100px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+ <tr id="TR19">
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>SEEK URGENT MEIDCAL CARE IF:</b></td>
+    <td class="col" style="font-size: 13px" >
+   <textarea name="umc" placeholder="SEEK URGENT MEIDCAL CARE IF..max 240 char.." maxlength="240"  style="font-family:sans-serif;font-size:1.0em;height:75px;width:500px;resize: none;">
+</textarea>
+    </td>
+  </tr>
+  </table>
+  </form>
+</div>
+</form>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</body>
+</html>
