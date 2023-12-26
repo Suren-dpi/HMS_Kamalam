@@ -2,6 +2,21 @@
 <html lang="en">
 <head>
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        var CurrentDate = new Date();
+        var licDate = new Date("{{licenseinfo}}");
+        var milli_secs = CurrentDate.getTime() - licDate.getTime();
+            // Convert the milli seconds to Days
+            var days = milli_secs / (1000 * 3600 * 24);
+            var daysleft =  Math.round(Math.abs(days));
+        if(daysleft <= 30){
+                    alert('Your license going to expire in '+daysleft+' days');
+                }
+
+});
+ </script>
     <meta charset="UTF-8">
     <title>Dashboard</title>
 </head>
@@ -16,6 +31,8 @@
 </div>
 <div class="header">
   <h1>KAMALAM HOSPITAL</h1>
+    <h4>248 / 53-M, Nethaji By-pass Road, Dharmapuri - 636701</h4>
+    <h4>gmail: kamalamnursinghome@gmail.com    ph: 04342 260707</h4>
 </div>
 <div class="patienticon">
 <!--    <a href="staffs">Staffs</a>&emsp;&emsp;&emsp;&emsp;-->
@@ -26,9 +43,18 @@
 
     <a href="appointment"><img class="btnimg1" src="{{ url_for('static', path='images/app.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
     <a href="inpatient"><img class="btnimg1" src="{{ url_for('static', path='images/inpat.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
-    <a href="staffs"><img class="btnimg1" src="{{ url_for('static', path='images/staffs.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
-    <a href="reports"><img class="btnimg1" src="{{ url_for('static', path='images/report.png') }}"  /></a>
+    <a href="reports"><img class="btnimg1" src="{{ url_for('static', path='images/report.png') }}"  /></a>&emsp;&emsp;&emsp;&emsp;
+<!--        <a href="test"><img class="btnimg1" src="{{ url_for('static', path='images/staffs.png') }}"  /></a>-->
 </div>
+
+
+<div class="error-popup" id="myForm1">
+     <form class="form-container">
+<span class="btncancel">&times;</span><br>
+<label style="color:Red;">Your license going to expire on {{licenseinfo}}. Renew before the expire date.</label>
+     </form>
+</div>
+
 <div class="copyright">
     <p>©primosoftwaresolutions</p>
 </div>

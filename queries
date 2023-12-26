@@ -1,0 +1,5 @@
+CREATE TABLE admission (ipdno text NOT NULL PRIMARY KEY,patient text NOT NULL ,doa text NOT NULL ,age text NOT NULL,dob text NOT NULL,sex text NOT NULL, bloodgroup text NOT NULL, roomno text NOT NULL,guardian text NOT NULL ,mobileno text NOT NULL ,maritialstatus text NOT NULL ,address text NOT NULL ,consultingdr text NOT NULL ,department text NOT NULL ,referreddr text NULL,presentcomplaint text NULL,familyhistory text NULL ,remarks text NULL,payment text NULL, dod text NULL,date text NOT NULL )
+
+CREATE TABLE ipd_category (itemno text NOT NULL PRIMARY KEY,Category text NOT NULL )
+
+CREATE TABLE appointments (Tokenno text NOT NULL,Receiptno text NOT NULL PRIMARY KEY,Date text NOT NULL,Time text NOT NULL,               Patient text NOT NULL ,Age text NOT NULL, Sex real NOT NULL, Guardian text NOT NULL , Address text NOT NULL, Phone text NOT NULL, Doctor text NOT NULL, Department text NOT NULL,Consultationfee NUMERIC  NOT NULL, Medicalhistory text NOT NULL)

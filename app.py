@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 from passlib.context import CryptContext
 from pydantic import BaseModel
 import os
+from urllib.parse import unquote
 import sqlite3
 import uuid
 import pandas as pd
@@ -68,15 +69,10 @@ class TokenData(BaseModel):
 class Config:
     def prereq(self):
         year = datetime.now().strftime('%Y')
-        conn = self.get_config()
-        os.chdir(r"" + conn['Invoicepath'])
         cwd = os.getcwd()
-        if os.path.isdir(conn['Invoicepath']+"/Invoice") == False:
-            os.mkdir(r"" + cwd + "/Invoice")
-        if os.path.isdir(conn['Invoicepath']+"/Invoice/Outpatient") == False:
-            os.mkdir(r"" + cwd + "/Invoice/Outpatient")
-        if os.path.isdir(conn['Invoicepath']+"/Invoice/Outpatient/"+year) == False:
-            os.mkdir(r"" + cwd + "/Invoice/Outpatient/"+year)
+        print(cwd)
+        if os.path.isdir("/Logs") == False:
+            os.mkdir(r"" + cwd + "/Logs")
         os.chdir(r"" + path)
 
     def get_config(self):
@@ -213,18 +209,19 @@ class Validate:
             data = df.to_dict('records')[0]
             license_key = data['license_key']
             system_key = data['system_key']
+            license_startdate = data['license_startdate']
             license_enddate = val.decrypt(key, license_key)
             system_data = val.decrypt(key, system_key)
             today = datetime.now().strftime('%Y-%m-%d')
             if today <= license_enddate.decode():
                 if system_data.decode() == conf.get_mac():
-                    return json.dumps({'license_status': 'Active', 'licence_valid_upto': license_enddate.decode(),
+                    return json.dumps({'license_status': 'Active', 'license_startdate':license_startdate,'licence_valid_upto': license_enddate.decode(),
                                        'system_info': system_data.decode()}, indent=4)
                 else:
                     return 'Invalid System info'
             else:
                 return json.dumps(
-                    {'license_status': 'Inactive', 'licence_valid_upto': license_enddate.decode(),
+                    {'license_status': 'Inactive', 'license_startdate':license_startdate,'licence_valid_upto': license_enddate.decode(),
                      'system_info': system_data.decode()},
                     indent=4)
         except BaseException as e:
@@ -343,50 +340,49 @@ async def logout(request: Request, currentuser: User=Depends(manager)):
         return resp
     except BaseException as e:
         conf.result_log(str(e))
-        return templates.TemplateResponse('result.html', {'request': request, 'user': currentuser, 'error': str(e)})
-
 
 @app.get('/dashboard', response_class=HTMLResponse)
 async def dashboard(request: Request,currentuser: User=Depends(manager)):
     license = json.loads(val.view_licence())
     systeminfo = conf.get_mac()
+    valid_from = license['license_startdate']
     valid_upto = license['licence_valid_upto']
     date = datetime.now().strftime('%Y-%m-%d')
     if valid_upto >= date:
-        return templates.TemplateResponse('dashboard.html', {'request': request, 'user': currentuser, 'systeminfo':systeminfo, 'licenseinfo':valid_upto})
+        if valid_from < date:
+            return templates.TemplateResponse('dashboard.html',
+                                              {'request': request, 'user': currentuser, 'systeminfo': systeminfo,
+                                               'licenseinfo': valid_upto})
+        else:
+            redirect_url = request.url_for('login_invalid') + '?License_Not_Activated'
+            return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     else:
         redirect_url = request.url_for('login_invalid') + '?License_Expired'
         return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
 
-@app.get('/staffs', response_class=HTMLResponse)
-async def staffs(request: Request,currentuser: User=Depends(manager)):
-    return templates.TemplateResponse('staff.html',
-                                      {'request': request, 'empdata':'', 'error':'', 'data': ''})
-
+#Out Patients
 @app.get('/appointment', response_class=HTMLResponse)
 async def appointment(request: Request,currentuser: User=Depends(manager)):
-    dbpath = r"" + path + "\\Database\\" + conf.get_config()['database']
-    conn = sqlite3.connect(dbpath)
-    date = datetime.now().strftime('%Y-%m-%d')
-    total_patients = sqldb.execute("select count(*) from appointments")[0][0]
-    sql_query = pd.read_sql_query('''select * from appointments where date = '{0}' order by time desc'''.format(date), conn)
-    df = pd.DataFrame(sql_query,
-                      columns=['Tokenno', 'Receiptno','Date', 'Time', 'Patient', 'Age', 'Sex','Guardian', 'Doctor', 'Department',
-                               'Consultationfee', 'Medicalhistory'])
-    df = df.style.hide(axis='index')
-    return templates.TemplateResponse('appointment.html', {'request': request, 'data': df.to_html(), 'total_patients': total_patients})
-
-@app.get('/inpatient', response_class=HTMLResponse)
-async def reports(request: Request,currentuser: User=Depends(manager)):
-    return templates.TemplateResponse('inpatient.html', {'request': request})
-
-@app.get('/reports', response_class=HTMLResponse)
-async def reports(request: Request,currentuser: User=Depends(manager)):
-    return templates.TemplateResponse('report1.html', {'request': request})
-
-@app.get('/dissum', response_class=HTMLResponse)
-async def reports(request: Request,currentuser: User=Depends(manager)):
-    return templates.TemplateResponse('dischargesummary.html', {'request': request})
+    try:
+        dbpath = r"" + path + "\\Database\\" + conf.get_config()['database']
+        conn = sqlite3.connect(dbpath)
+        date = datetime.now().strftime('%Y-%m-%d')
+        drs = sqldb.execute("select doctor_name from doctors")
+        drs1 = []
+        for x in range(len(drs)):
+            drs1.append(drs[x][0])
+        total_patients = sqldb.execute("select count(*) from appointments")[0][0]
+        sql_query = pd.read_sql_query(
+            '''select * from appointments where date = '{0}' order by time desc'''.format(date), conn)
+        df = pd.DataFrame(sql_query,
+                          columns=['Tokenno', 'Receiptno', 'Date', 'Time', 'Patient', 'Age', 'Sex', 'Guardian',
+                                   'Doctor', 'Department',
+                                   'Consultationfee', 'Medicalhistory'])
+        df = df.style.hide(axis='index')
+        return templates.TemplateResponse('appointment.html', {'request': request, 'data': df.to_html(), 'drs': drs1,
+                                                               'total_patients': total_patients})
+    except BaseException as e:
+        return templates.TemplateResponse('appointment.html', {'request': request,'error': str(e)})
 
 @app.post('/createappointment', response_class=HTMLResponse)
 async def createappointment(request: Request,name: str = Form(...),guardian: str = Form(...),age: str = Form(...),sex: str = Form(...),address: str = Form(...),
@@ -398,72 +394,13 @@ async def createappointment(request: Request,name: str = Form(...),guardian: str
         tokenno += 1
         count = sqldb.execute("select count(*) from appointments where date = '{0}'".format(date))[0][0]
         count += 1
-        receiptno = str(datetime.now().strftime('%y%m%d'))+(str(count)).zfill(3)
+        receiptno = "OP"+str(datetime.now().strftime('%y%m%d'))+(str(count)).zfill(3)
         sqldb.insertappointment(str(tokenno),receiptno,date,time, name, age, sex, guardian,address, phone, dr,dept,consfee,medhist)
         redirect_url = request.url_for('appointment')
         return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     except BaseException as e:
         print(str(e))
-        return {'error':str(e)}
-
-@app.post('/get_reports', response_class=HTMLResponse)
-async def get_reports(request: Request,dr: str = Form(...),radio: str = Form(...),datepicker: str = Form(None),monthpicker: str = Form(None),yearpicker: str = Form(None),currentuser: User=Depends(manager)):
-    dbpath = r"" + path + "\\Database\\" + conf.get_config()['database']
-    conn = sqlite3.connect(dbpath)
-    if radio == 'daily':
-        if dr == 'All':
-            sql_query = pd.read_sql_query(
-                '''select * from appointments where date = '{1}' order by time asc'''.format(dr,datepicker),conn)
-        else:
-            sql_query = pd.read_sql_query(
-                '''select * from appointments where doctor = '{0}' and date = '{1}' order by time asc'''.format(dr,datepicker),conn)
-
-
-        df = pd.DataFrame(sql_query,
-                          columns=['Tokenno', 'Receiptno', 'Date', 'Time', 'Patient', 'Age', 'Sex', 'Guardian',
-                                   'Doctor', 'Department',
-                                   'Consultationfee', 'Medicalhistory'])
-        df = df.style.hide(axis='index')
-        return templates.TemplateResponse('result.html',
-                                          {'request': request, 'data': df.to_html()})
-    elif radio == 'monthly':
-        print(dr,monthpicker)
-    elif radio == 'yearly':
-        print(dr,yearpicker)
-    return radio
-
-@app.post('/print_dissum', response_class=HTMLResponse)
-async def reports(request: Request,currentuser: User=Depends(manager)):
-    dict_data = {}
-    byte_data = await request.body()
-    str_data = byte_data.decode("UTF-8").replace("=", ":").replace("&", ",").replace("%40", "@").replace("+", " ")
-    list_data = str_data.split(",")
-    for x in list_data:
-        dt = x.split(":")
-        dict_data[dt[0]] = dt[1]
-    bill.print(dict_data)
-    # To view the file in the browser, use "inline" for the media_type
-    receiptpath = path
-    headers = {
-        "Content-Disposition": "inline; filename=" + receiptpath + "/dischargesummary.pdf"
-    }
-    # Create a FileResponse object with the file path, media type and headers
-    response = FileResponse(receiptpath + "/dischargesummary.pdf", media_type="application/pdf", headers=headers)
-    # Return the FileResponse object
-    return response
-
-@app.post('/cashreport', response_class=HTMLResponse)
-async def cashreport(request: Request,date: str = Form(...),currentuser: User=Depends(manager)):
-
-    r1 = pd.read_sql_query(
-        "select Receiptno,Date,Patient,Age,Address,Phone,Doctor,Department,Consultationfee from appointments where Date = '{0}'".format(
-            date), conn)
-    r2 = pd.read_sql_query(
-        "select Date,Doctor,COUNT(Receiptno) as TotalPatients,SUM(Consultationfee) as TotalFee from appointments where Date = '{0}' group by Date,Doctor;".format(date), conn)
-    r1 = r1.style.hide(axis='index')
-    r2 = r2.style.hide(axis='index')
-    return templates.TemplateResponse('result1.html',
-                                      {'request': request, 'data': r2.to_html(),'data1': r1.to_html()})
+        return templates.TemplateResponse('appointment.html', {'request': request,'error': str(e)})
 
 @app.post('/printreceipt', response_class=HTMLResponse)
 async def printreceipt(request: Request,receiptno: str = Form(...),currentuser: User=Depends(manager)):
@@ -472,19 +409,244 @@ async def printreceipt(request: Request,receiptno: str = Form(...),currentuser: 
         conn = conf.get_config()
         receiptpath = conn['Invoicepath'] + "/Invoice/Outpatient/" + year
         details = sqldb.execute("select * from appointments where receiptno = '{0}'".format(receiptno))[0]
-        bill.print_receipt(receiptno, receiptpath, details)
+        opdata = list(details)
+        opdata.append(currentuser)
+        bill.print_receipt(path, opdata)
         # To view the file in the browser, use "inline" for the media_type
         headers = {
-            "Content-Disposition": "inline; filename=" + receiptpath + "/231104001.pdf"
+            "Content-Disposition": "inline; filename=" + path + "/opd.pdf"
         }
         # Create a FileResponse object with the file path, media type and headers
-        response = FileResponse(receiptpath + "/" + receiptno + ".pdf", media_type="application/pdf", headers=headers)
+        response = FileResponse(path + "/opd.pdf", media_type="application/pdf", headers=headers)
         # Return the FileResponse object
         return response
     except BaseException as e:
-        return str(e)
+        return templates.TemplateResponse('appointment.html', {'request': request,'error': str(e)})
+
+#Reports
+
+@app.get('/reports', response_class=HTMLResponse)
+async def reports(request: Request,currentuser: User=Depends(manager)):
+    return templates.TemplateResponse('report.html', {'request': request})
+
+@app.post('/cashreport', response_class=HTMLResponse)
+async def cashreport(request: Request,date: str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        r2 = pd.read_sql_query(
+            "select Date,Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date = '{0}' group by Date,Doctor;".format(
+                date), conn)
+        r3 = pd.read_sql_query(
+            "select date as Date,consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date = '{0}' and dod !='' group by Date,consultingdr;".format(
+                date), conn)
+        r2 = r2.style.hide(axis='index')
+        r3 = r3.style.hide(axis='index')
+        return templates.TemplateResponse('DCR.html',
+                                          {'request': request, 'date': date, 'data': r2.to_html(),
+                                           'data1': r3.to_html()})
+    except BaseException as e:
+        print(str(e))
+        return templates.TemplateResponse('DCR.html', {'request': request, 'error': str(e)})
+
+@app.post('/monthlycashreport', response_class=HTMLResponse)
+async def monthlycashreport(request: Request,month: str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        r2 = pd.read_sql_query(
+            "select Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
+                month + '%'), conn)
+        r3 = pd.read_sql_query(
+            "select consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date like '{0}' group by consultingdr;".format(
+                month + '%'), conn)
+        r2 = r2.style.hide(axis='index')
+        r3 = r3.style.hide(axis='index')
+        return templates.TemplateResponse('MCR.html',
+                                          {'request': request, 'month': month, 'data': r2.to_html(),
+                                           'data1': r3.to_html()})
+    except BaseException as e:
+        print(str(e))
+        return templates.TemplateResponse('MCR.html', {'request': request, 'error': str(e)})
+
+@app.post('/yearlycashreport', response_class=HTMLResponse)
+async def yearlycashreport(request: Request,year: str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        r2 = pd.read_sql_query(
+            "select Doctor,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
+                year + '%'), conn)
+        r3 = pd.read_sql_query(
+            "select COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date like '{0}'".format(
+                year + '%'), conn)
+        r2 = r2.style.hide(axis='index')
+        r3 = r3.style.hide(axis='index')
+        return templates.TemplateResponse('YCR.html',
+                                          {'request': request, 'year': year, 'data': r2.to_html(),
+                                           'data1': r3.to_html()})
+    except BaseException as e:
+        print(str(e))
+        return templates.TemplateResponse('YCR.html', {'request': request, 'error': str(e)})
+
+
+# IPD
+@app.get('/inpatient', response_class=HTMLResponse)
+async def inpatient(request: Request,currentuser: User=Depends(manager)):
+    try:
+        sql_query = pd.read_sql_query('''select * from admission where dod = '' order by ipdno desc''', conn)
+        df = pd.DataFrame(sql_query,
+                          columns=['ipdno', 'patient', 'doa', 'age', 'sex', 'roomno', 'guardian', 'mobileno',
+                                   'address', 'consultingdr', 'department', 'referreddr'])
+        df = df.style.hide(axis='index')
+        return templates.TemplateResponse('inpatient.html', {'request': request, 'data': df.to_html()})
+    except BaseException as e:
+        print(str(e))
+        return templates.TemplateResponse('inpatient.html', {'request': request, 'error': str(e)})
+
+@app.get('/ipd_add', response_class=HTMLResponse)
+async def ipd_add(request: Request,currentuser: User=Depends(manager)):
+    try:
+        drs = sqldb.execute("select doctor_name from doctors")
+        drs1 = []
+        for x in range(len(drs)):
+            drs1.append(drs[x][0])
+        return templates.TemplateResponse('IPD_Reg.html', {'request': request, 'drs': drs1})
+    except BaseException as e:
+        print(str(e))
+        return templates.TemplateResponse('IPD_Reg.html', {'request': request, 'error': str(e)})
+
+@app.post('/ipd_add_db', response_class=HTMLResponse)
+async def ipd_add_db(request: Request,currentuser: User=Depends(manager)):
+    try:
+        dict_data = {}
+        date = datetime.now().strftime('%Y-%m-%d')
+        count = sqldb.execute("select count(*) from admission")[0][0]
+        count += 1
+        ipdno = "IP" + str(datetime.now().strftime('%y%m%d')) + (str(count)).zfill(3)
+        byte_data = await request.body()
+        str_data1 = byte_data.decode("UTF-8").replace("+", " ")
+        str_data = unquote(str_data1)
+        list_data = str_data.split("&")
+        for x in list_data:
+            dt = x.split("=")
+            dict_data[dt[0]] = dt[1]
+        val = list(dict_data.values())
+        val = list((map(str, val)))
+        #appending empty discharge date
+        val.append('')
+        val.append(date)
+        val.insert(0, ipdno)
+        var_string = ', '.join('?' * len(val))
+        qry = 'INSERT INTO admission (ipdno,patient,doa, age, dob,sex,bloodgroup,roomno,guardian,mobileno,maritialstatus,address,consultingdr,department,referreddr,presentcomplaint,familyhistory,remarks,dod,date) VALUES (%s);' % var_string
+        sqldb.execute_insert(qry, val)
+        redirect_url = request.url_for('inpatient')
+        return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+    except BaseException as e:
+        print(str(e))
+        drs = sqldb.execute("select doctor_name from doctors")
+        drs1 = []
+        for x in range(len(drs)):
+            drs1.append(drs[x][0])
+        return templates.TemplateResponse('IPD_Reg.html', {'request': request, 'drs': drs1,'error': str(e)})
+
+@app.post('/printipdform', response_class=HTMLResponse)
+async def printipdform(request: Request,ipdno: str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        year = datetime.now().strftime('%Y')
+        condt = conf.get_config()
+        receiptpath = condt['Invoicepath'] + "/Invoice/Outpatient/" + year
+        sql_query = pd.read_sql_query('''select * from admission where ipdno = '{0}' '''.format(ipdno), conn)
+        df = pd.DataFrame(sql_query,
+                          columns=['ipdno', 'patient', 'doa', 'age', 'sex', 'bloodgroup', 'roomno', 'guardian', 'mobileno', 'maritialstatus',
+                                   'address', 'consultingdr', 'department', 'referreddr','presentcomplaint','familyhistory','remarks'])
+        details = df.to_dict('records')[0]
+        details['user'] = currentuser
+        bill.print_admissionform(ipdno, receiptpath, details)
+        # To view the file in the browser, use "inline" for the media_type
+        headers = {
+            "Content-Disposition": "inline; filename="+path+"/admissionform.pdf"
+        }
+        # Create a FileResponse object with the file path, media type and headers
+        response = FileResponse(path+"/admissionform.pdf", media_type="application/pdf", headers=headers)
+        # Return the FileResponse object
+        return response
+    except BaseException as e:
+        return templates.TemplateResponse('inpatient.html', {'request': request, 'error': str(e)})
+
+@app.post('/dissum', response_class=HTMLResponse)
+async def reports(request: Request,ipdno2:str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        ipd_details = list(sqldb.execute('''select * from admission where ipdno = '{0}' '''.format(ipdno2))[0])
+        print(ipd_details)
+        return templates.TemplateResponse('dischargesummary.html', {'request': request, 'ipd_details': ipd_details})
+    except BaseException as e:
+        return templates.TemplateResponse('dischargesummary.html', {'request': request, 'error': str(e)})
+
+@app.post('/print_dissum', response_class=HTMLResponse)
+async def reports(request: Request,currentuser: User=Depends(manager)):
+    try:
+        dict_data = {}
+        byte_data = await request.body()
+        str_data = byte_data.decode("UTF-8").replace("=", ":").replace("&", ",").replace("%40", "@").replace("+", " ")
+        list_data = str_data.split(",")
+        for x in list_data:
+            dt = x.split(":")
+            dict_data[dt[0]] = dt[1]
+        dict_data['user'] = currentuser
+        bill.print_discharge_summary(dict_data)
+        # To view the file in the browser, use "inline" for the media_type
+        receiptpath = path
+        headers = {
+            "Content-Disposition": "inline; filename=" + receiptpath + "/dischargesummary.pdf"
+        }
+        # Create a FileResponse object with the file path, media type and headers
+        response = FileResponse(receiptpath + "/dischargesummary.pdf", media_type="application/pdf", headers=headers)
+        # Return the FileResponse object
+        return response
+    except BaseException as e:
+        return templates.TemplateResponse('dischargesummary.html', {'request': request, 'error': str(e)})
+
+@app.post('/dischargebill', response_class=JSONResponse)
+async def dischargebill(request: Request,ipdno1:str = Form(...),currentuser: User=Depends(manager)):
+    try:
+        ipd_details = list(sqldb.execute('''select * from admission where ipdno = '{0}' '''.format(ipdno1))[0])
+        print(ipd_details)
+        category = sqldb.execute("select Category from ipd_category")
+        cat1 = []
+        for x in range(len(category)):
+            cat1.append(category[x][0])
+        print(cat1)
+        return templates.TemplateResponse('dischargebill.html',
+                                          {'request': request, 'ipd_details': ipd_details, 'category': cat1})
+    except BaseException as e:
+        return templates.TemplateResponse('dischargebill.html', {'request': request, 'error': str(e)})
+
+@app.post('/print_dischargebill', response_class=JSONResponse)
+async def print_dischargebill(request: Request,currentuser: User=Depends(manager)):
+    try:
+        dict_data = {}
+        byte_data = await request.body()
+        str_data1 = byte_data.decode("UTF-8").replace("=", "|").replace("&", ",").replace("%40", "@").replace("+", " ")
+        str_data = unquote(str_data1)
+        list_data = str_data.split(",")
+        for x in list_data:
+            dt = x.split("|")
+            dict_data[dt[0]] = dt[1]
+        dict_data['user'] = currentuser
+        print(dict_data)
+        sqldb.execute('''UPDATE admission set dod = '{0}', payment = '{1}' where ipdno = '{2}' '''.format(dict_data['dod'],dict_data['total'],dict_data['ipdno']))
+        bill.print_discharge_bill(dict_data)
+        # To view the file in the browser, use "inline" for the media_type
+        headers = {
+            "Content-Disposition": "inline; filename=" + path + "/dischargebill.pdf"
+        }
+        # Create a FileResponse object with the file path, media type and headers
+        response = FileResponse(path + "/dischargebill.pdf", media_type="application/pdf", headers=headers)
+        # Return the FileResponse object
+        return response
+    except BaseException as e:
+        return templates.TemplateResponse('dischargebill.html', {'request': request, 'error': str(e)})
 
 # Staff Management
+@app.get('/staffs', response_class=HTMLResponse)
+async def staffs(request: Request,currentuser: User=Depends(manager)):
+    return templates.TemplateResponse('staff.html',
+                                      {'request': request, 'empdata':'', 'error':'', 'data': ''})
 
 @app.get('/liststaff', response_class=HTMLResponse)
 async def liststaff(request: Request):
@@ -701,12 +863,6 @@ async def view_user(request: Request):
     except BaseException as e:
         print(str(e))
         return str(e)
-
-####Test#####
-@app.get('/get_token', response_class=JSONResponse)
-async def get_token(request: Request):
-    tk = {"authtoken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwMTE1ODQ2N30.MY1NHU_N6t5X6HhUfPgcKF60tntL-9MTrV8oSymvE1k"}
-    return tk
 
 
 if __name__ == "__main__":

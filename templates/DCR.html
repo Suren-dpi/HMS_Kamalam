@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DAILY CASH REPORT</title>
+     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        var x = "{{error}}";
+        if (x.length >0){
+            $(".error-popup").show();
+        }
+         $(".btncancel").click(function(){
+        $(".error-popup").hide();
+        });
+   });
+   </script>
+</head>
+<body><br>
+<div class="error-popup" id="myForme">
+     <form action="/printreceipt" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<h3>{{error}}</h3>
+     </form>
+</div>
+<h2>Daily Cash Report - {{date}}</h2>
+<br>
+<h3>Out-Patient Cash Report</h3>
+ <div >{{data|safe}}</div><br><br><br>
+<h3>In-Patient Cash Report</h3>
+ <div >{{data1|safe}}</div>
+</body>
+<div class="copyright">
+    <p>©primosoftwaresolutions</p>
+</div>
+</html>

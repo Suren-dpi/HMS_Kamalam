@@ -1,0 +1,188 @@
+<html>
+<head>
+      <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+        $(document).ready(function(){
+        var x = "{{error}}";
+        if (x.length >0){
+            $(".error-popup").show();
+        }
+        $(".btncancel").click(function(){
+        $(".error-popup").hide();
+        });
+        $("#myTable").on('input', '.txtCal', function () {
+       var calculated_total_sum = 0;
+       $("#myTable .txtCal").each(function () {
+           var get_textbox_value = $(this).val();
+           if ($.isNumeric(get_textbox_value)) {
+              calculated_total_sum += parseFloat(get_textbox_value);
+              }
+            });
+              $("#total_sum_value").html(calculated_total_sum);
+              $("#settext").click(function(event) {
+             $('#input').attr("value", calculated_total_sum);
+        });
+       });
+
+        var numbers = $('.category').text();
+        var numbersArray =numbers.split(',');
+        var option = '';
+        for (var i=0;i<numbersArray.length;i++){
+            newString = numbersArray[i].replace(/[^0-9a-zA-Z.@ ]/g, '');
+            option += '<option value="'+ newString + '">' + newString + '</option>';
+        }
+        $('.items').append(option);
+});
+ </script>
+</head>
+<body>
+<div class = 'buttonsbar'>
+<form action="/dashboard" method="get">
+    <button style="left:30px;width: 100px;"  class="button-all">Home</button>
+</form>
+<form action="/logout" method="get">
+   <button style="left:140px;width: 80px;"  class="button-all"  >logout</button>
+</form>
+<div class="error-popup" id="myForme">
+     <form action="/printreceipt" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<h3>{{error}}</h3>
+     </form>
+</div>
+
+<div class = "category" hidden>
+    <h5>{{category}}</h5>
+</div>
+<h1 style=" text-align: center;">Discharge Bill</h1>
+<!--<img class="dbbtnimg" src="{{ url_for('static', path='images/kh_head.png') }}" alt="" width="500" height="100" /><br><br>-->
+
+<form action="/print_dischargebill" method="post">
+<div  class = "ipdd">
+    <table id="myTable1">
+<tr >
+    <td ><b>IPD No : </b></td>
+    <td><input value="{{ipd_details[0]}}" name = 'ipdno' readonly ></td>
+    <td ><b>Patient Name : </b></td>
+    <td><input value="{{ipd_details[1]}}" name = 'patient' readonly ></td>
+    <td ><b>Date of Admission : </b></td>
+    <td><input value="{{ipd_details[2]}}" name = 'doa' readonly ></td>
+
+<tr>
+    <td ><b>Roomno : </b></td>
+    <td><input value="{{ipd_details[7]}}" name = 'roomno' readonly ></td>
+    <td ><b>Age : </b></td>
+    <td><input value="{{ipd_details[3]}}" name = 'age' readonly ></td>
+   <td ><b>Sex</b></td>
+   <td><input value="{{ipd_details[5]}}" name = 'sex' readonly ></td>
+</tr>
+<tr>
+    <td ><b>Guardian</b></td>
+    <td><input value="{{ipd_details[8]}}" name = 'guardian' readonly ></td>
+    <td><b>Contact no</b></td>
+    <td><input value="{{ipd_details[9]}}" name = 'contactno' readonly ></td>
+    <td ><b>Consulted Dr.</b></td>
+    <td><input value="{{ipd_details[12]}}" name = 'consdr' readonly ></td>
+ </tr>
+ <tr>
+    <td ><b>Depatment</b></td>
+    <td><input value="{{ipd_details[13]}}" name = 'dept' readonly ></td>
+<!--    <td ><b>Advance</b></td>-->
+<!--    <td><input value="{{ipd_details[18]}}" name = 'adv' readonly ></td>-->
+    <td ><b>Discharge Date</b></td>
+    <td><input style="width: 250px;"  type="datetime-local" id="dod" name="dod" required></td>
+ </tr>
+    </table>
+</div>
+
+    <div class = "dsb">
+<table id="myTable">
+<tr>
+    <th style=" text-align: center;">Itemno</th>
+    <th style=" text-align: center;">Category</th>
+    <th style=" text-align: center;" >Amount</th>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span >1</span></td>
+    <td>
+        <select style="width: 200px;height:20px" class = items id="item1" name="item1">
+            <option value="None"></option>
+        </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt1" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>2</span></td>
+    <td>
+        <select style="width: 200px;height:20px" class = items id="item2" name="item2">
+            <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt2" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>3</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items id="item3" name="item3">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt3" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>4</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items id="item4" name="item4">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt4" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>5</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items  id="item5" name="item5">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt5"  class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>6</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items  id="item6" name="item6">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt6" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>7</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items  id="item7" name="item7">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt7" class='txtCal' /></td>
+</tr>
+<tr>
+    <td style=" text-align: center;"><span>8</span></td>
+    <td>
+  <select style="width: 200px;height:20px" class = items  id="item8" name="item8">
+      <option value="None"></option>
+           </select>
+    </td>
+    <td><input style="width: 200px;height:20px" type="text" name="amt8" class='txtCal' /></td>
+</tr>
+<tr>
+    <td></td>
+    <td style=" text-align: right;"><span><b>TOTAL  </b></span></td>
+    <td style=" text-align: center;" ><b>Rs. <span  id="total_sum_value"></span></b></td>
+    <td><input id="input" name="total"  type="text" hidden  value="" /> </td>
+</tr>
+</table>
+        </div>
+    <button  style="left:230px;width: 80px;"  class="button-all" id="settext" >Print</button>
+</form>
+</body>
+</html>

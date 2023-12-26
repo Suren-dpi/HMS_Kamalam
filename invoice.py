@@ -1,5 +1,7 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.platypus.tables import Table, TableStyle
+from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Image
 import json
 import re
@@ -15,13 +17,11 @@ class receipt:
             jsonbody = json.load(_)
         return jsonbody
 
-    def print_receipt(self,receiptno,receiptpath,details):
-        print(details)
+    def print_receipt(self,receiptpath,details):
+        # print(details)
         conn = self.get_config()
-        print(conn)
         w, h = A4
-        c = canvas.Canvas(receiptpath+"/"+str(receiptno) + ".pdf", pagesize=A4)
-
+        c = canvas.Canvas(receiptpath+"/opd.pdf", pagesize=A4)
         # head = c.beginText(250, h - 100)
         # head.setFont("Helvetica-Bold", 14)
         # c.line(50, h - 85, 550, h - 85)
@@ -46,7 +46,7 @@ class receipt:
         c.drawText(desc)
         desc1 = c.beginText(260, h - 175)
         desc1.setFont("Helvetica", 12)
-        desc1.textLine("Date : "+details[2]+"                   Receipt No : "+str(details[1]))
+        desc1.textLine("Date : "+details[2]+"                Receipt No : "+str(details[1]))
         desc1.textLine("Time : 11:23:45")
         desc1.textLine("Place : "+details[8])
         desc1.textLine("Consulting Doctor : "+details[10])
@@ -58,15 +58,9 @@ class receipt:
         c.drawString(100, h - 285,
                      "  1.                          Consultation Fees                                      Rs. "+str(details[12]))
         c.line(50, h - 335, 550, h - 335)
+        c.drawString(55, h - 350, "printedby: "+details[14])
 
-        # head11 = c.beginText(250, h - 490)
-        # head11.setFont("Helvetica-Bold", 14)
-        # c.line(50, h - 475, 550, h - 475)
-        # head11.textLine(conn['hospitalname'])
-        # # c.drawString(290, h - 510, conn['address'])
-        # c.drawString(200, h - 510, conn['address'] + conn['city']+" - "+conn['pincode'])
-        # c.line(50, h - 525, 550, h - 525)
-        # c.drawText(head11)
+
         c.line(55, h - 440, 555, h - 440)
         c.drawImage('kh_head.png', 100, h - 520, width=400, height=75)
         c.line(55, h - 520, 555, h - 520)
@@ -84,7 +78,7 @@ class receipt:
         c.drawText(desc11)
         desc12 = c.beginText(260, h - 575)
         desc12.setFont("Helvetica", 12)
-        desc12.textLine("Date : " + details[2] + "                   Receipt No : " + str(details[1]))
+        desc12.textLine("Date : " + details[2] + "                Receipt No : " + str(details[1]))
         desc12.textLine("Time : 11:23:45")
         desc12.textLine("Place : " + details[8])
         desc12.textLine("Consulting Doctor : " + details[10])
@@ -96,6 +90,7 @@ class receipt:
         c.drawString(100, h - 685,
                      "  1.                          Consultation Fees                                      Rs. "+str(details[12]))
         c.line(50, h - 735, 550, h - 735)
+        c.drawString(55, h - 750, "printedby: " + details[14])
         c.showPage()
         c.save()
 
@@ -105,8 +100,8 @@ class receipt:
         out_list = out1.splitlines()
         return out_list
 
-    def print(self, details):
-        print(details)
+    def print_discharge_summary(self, details):
+        # print(details)
         w, h = A4
         c = canvas.Canvas("dischargesummary.pdf", pagesize=A4)
         c.drawImage('kh_head.png', 75, 750, width=400, height=75)
@@ -114,33 +109,37 @@ class receipt:
         c.drawString(55, h - 100, 'DISCHARGE SUMMARY/TREATMENT SUMMARY/DISCHARGE AT REQUEST/AGAINST MEDICAL ADVISE' )
         c.line(55, h - 105, 555, h - 105)
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(55, h - 125, 'Patient Name : ' )
+        c.drawString(55, h - 125, 'IPD No : ')
         c.setFont('Helvetica', 12)
-        c.drawString(150, h - 125,details['pname'])
+        c.drawString(110, h - 125, details['ipdno'])
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(300, h - 125, 'Age : ')
+        c.drawString(200, h - 125, 'Patient Name : ' )
         c.setFont('Helvetica', 12)
-        c.drawString(340, h - 125, details['age'])
+        c.drawString(290, h - 125,details['pname'])
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(450, h - 125, 'Sex : ')
+        c.drawString(410, h - 125, 'Age : ')
         c.setFont('Helvetica', 12)
-        c.drawString(490, h - 125, details['sex'])
+        c.drawString(440, h - 125, details['age'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(470, h - 125, 'Sex : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(510, h - 125, details['sex'])
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - 150, 'Date of Admission : ')
         c.setFont('Helvetica', 12)
-        c.drawString(175, h - 150, details['doa'])
+        c.drawString(175, h - 150, details['doa'].replace("%3A" , ":"))
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(250, h - 150, 'Date of Discharge : ')
+        c.drawString(310, h - 150, 'Date of Discharge : ')
         c.setFont('Helvetica', 12)
-        c.drawString(370, h - 150, details['dod'])
+        c.drawString(430, h - 150, details['dod'].replace("%3A" , ":"))
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(450, h - 150, 'Room No : ')
+        c.drawString(55, h - 175, 'Room No : ')
         c.setFont('Helvetica', 12)
-        c.drawString(515, h - 150, details['roomno'])
+        c.drawString(120, h - 175, details['roomno'])
         c.setFont('Helvetica-Bold', 12)
-        c.drawString(55, h - 175, 'Consulted Doctor : ')
+        c.drawString(150, h - 175, 'Consulted Doctor : ')
         c.setFont('Helvetica', 12)
-        c.drawString(175, h - 175, details['cdr'])
+        c.drawString(275, h - 175, details['cdr'])
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - 200, 'DIAGNOSIS : ')
         c.setFont('Helvetica', 12)
@@ -150,8 +149,7 @@ class receipt:
         for i in range(len(dig)):
             y += 18
             c.drawString(x, h - y, dig[i])
-        print(y)
-
+        # print(y)
         pilly = 325
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - pilly, 'H/O PRESENT ILLNESS : ')
@@ -160,8 +158,7 @@ class receipt:
         for i in range(len(pill)):
             pilly += 18
             c.drawString(x, h - pilly, pill[i])
-        print(pilly)
-
+        # print(pilly)
         milly = 450
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - milly, 'CO-MORBIT ILLNESS : ')
@@ -170,8 +167,7 @@ class receipt:
         for i in range(len(mill)):
             milly += 18
             c.drawString(x, h - milly, mill[i])
-        print(milly)
-
+        # print(milly)
         phy = 525
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - phy, 'PAST HISTORY : ')
@@ -180,8 +176,7 @@ class receipt:
         for i in range(len(pasthist)):
             phy += 18
             c.drawString(x, h - phy, pasthist[i])
-        print(phy)
-
+        # print(phy)
         fhy = 600
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - fhy, 'FAMILY HISTORY : ')
@@ -190,8 +185,7 @@ class receipt:
         for i in range(len(famhist)):
             fhy += 18
             c.drawString(x, h - fhy, famhist[i])
-        print(fhy)
-
+        # print(fhy)
         cexy = 675
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - cexy, 'CLINICAL EXAMINATION : ')
@@ -200,9 +194,8 @@ class receipt:
         for i in range(len(cliex)):
             cexy += 18
             c.drawString(x, h - cexy, cliex[i])
-        print(cexy)
+        # print(cexy)
         c.showPage()
-
         #Page 2
         invy = 75
         c.setFont('Helvetica-Bold', 12)
@@ -212,8 +205,7 @@ class receipt:
         for i in range(len(invest)):
             invy += 18
             c.drawString(x, h -invy, invest[i])
-        print(invy)
-
+        # print(invy)
         cihy = 150
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - cihy, 'COURSE IN THE HOSPITAL : ')
@@ -222,8 +214,7 @@ class receipt:
         for i in range(len(cih)):
             cihy += 18
             c.drawString(x, h - cihy, cih[i])
-        print(cihy)
-
+        # print(cihy)
         cady = 275
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - cady, 'CONDITION AT DISCHARGE : ')
@@ -232,8 +223,7 @@ class receipt:
         for i in range(len(cad)):
             cady += 18
             c.drawString(x, h - cady, cad[i])
-        print(cady)
-
+        # print(cady)
         diay = 400
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - diay, 'DISCHARGE ADVICE : ')
@@ -242,8 +232,7 @@ class receipt:
         for i in range(len(dia)):
             diay += 18
             c.drawString(x, h - diay, dia[i])
-        print(diay)
-
+        # print(diay)
         revy = 580
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - revy, 'REVIEW : ')
@@ -252,8 +241,7 @@ class receipt:
         for i in range(len(review)):
             revy += 18
             c.drawString(x, h - revy, review[i])
-        print(revy)
-
+        # print(revy)
         umcy = 655
         c.setFont('Helvetica-Bold', 12)
         c.drawString(55, h - umcy, 'IF PRESENCE IF FOLLOWING SYMPTOMS SEEK URGENT MEIDCAL CARE : ')
@@ -262,12 +250,200 @@ class receipt:
         for i in range(len(umc)):
             umcy += 18
             c.drawString(x, h - umcy, umc[i])
-        print(umcy)
-
+        # print(umcy)
         c.setFont('Helvetica-Bold', 12)
         c.drawString(400, h -775,"Doctor's Signature")
-
+        c.setFont('Helvetica', 10)
+        c.drawString(55, h - 790, "printedby: " + details['user'])
         c.showPage()
         c.save()
+
+    def print_admissionform(self,receiptno,receiptpath,details):
+        # print(details)
+        # print(details['user'])
+        w, h = A4
+        c = canvas.Canvas("admissionform.pdf", pagesize=A4)
+        c.drawImage('kh_head.png', 75, 750, width=400, height=75)
+        c.setFont('Helvetica-Bold', 16)
+        c.drawString(200, h - 125, 'IN PATIENT ADMISSION FORM')
+        c.line(55, h - 130, 555, h - 130)
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 175, 'IPD no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(125, h - 175, details['ipdno'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 175, 'Patient Name : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(410, h - 175, details['patient'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 225, 'Date of Admission : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(195, h - 225, details['doa'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 225, 'Age : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(360, h - 225, details['age'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 275, 'Bloodgroup : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(155, h - 275, details['bloodgroup'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 275, 'Sex : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(360, h - 275, details['sex'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 325, 'Room no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(140, h - 325, details['roomno'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 325, 'Guardian : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(390, h - 325, details['guardian'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 375, 'Contact no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(150, h - 375, details['mobileno'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 375, 'Maritialstatus : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(415, h - 375, details['maritialstatus'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 425, 'Consult Dr. : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(150, h - 425, details['consultingdr'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 425, 'Dept : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(365, h - 425, details['department'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 475, 'Ref Dr. : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(125, h - 475, details['referreddr'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 525, 'Present Comp : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(170, h - 525, details['presentcomplaint'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 575, 'Family Hist : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(150, h - 575, details['familyhistory'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 625, 'Remarks : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(140, h - 625, details['remarks'])
+        # c.setFont('Helvetica-Bold', 12)
+        # c.drawString(75, h - 675, 'Advance : Rs. ')
+        # c.setFont('Helvetica', 12)
+        # c.drawString(155, h - 675, details['advance'])
+        # c.setFont('Helvetica-Bold', 12)
+        # c.drawString(325, h - 675, 'Payment Mode : ')
+        # c.setFont('Helvetica', 12)
+        # c.drawString(425, h - 675, details['paymentmode'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(400, h - 775, "Authority Signature")
+        c.setFont('Helvetica', 10)
+        c.drawString(55, h - 790, "printedby: "+details['user'])
+        c.showPage()
+        c.save()
+
+    def print_discharge_bill(self, details):
+        # print(details)
+        w, h = A4
+        c = canvas.Canvas("dischargebill.pdf", pagesize=A4)
+        c.drawImage('kh_head.png', 75, 750, width=400, height=75)
+        c.setFont('Helvetica-Bold', 16)
+        c.drawString(240, h - 120, 'DISCHARGE BILL')
+        c.line(55, h - 130, 555, h - 130)
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 155, 'IPD no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(125, h - 155, details['ipdno'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 155, 'Patient Name : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(410, h - 155, details['patient'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 180, 'Age : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(110, h - 180, details['age'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 180, 'Sex : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(360, h - 180, details['sex'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 205, 'Room no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(140, h - 205, details['roomno'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 205, 'Guardian : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(390, h - 205, details['guardian'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 230, 'Date of Discharge : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(195, h - 230, details['dod'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 230, 'Date of Admission : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(445, h - 230, details['doa'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 255, 'Contact no : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(150, h - 255, details['contactno'])
+        # c.setFont('Helvetica-Bold', 12)
+        # c.drawString(325, h - 255, 'Advance : ')
+        # c.setFont('Helvetica', 12)
+        # c.drawString(390, h - 255, details['adv'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(75, h - 280, 'Consult Dr. : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(150, h - 280, details['consdr'])
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(325, h - 280, 'Dept : ')
+        c.setFont('Helvetica', 12)
+        c.drawString(365, h - 280, details['dept'])
+        c.line(55, h - 295, 555, h - 295)
+        c.setFont('Helvetica', 12)
+        if details['item1'] != 'None':
+            c.drawString(100, h - 350, details['item1'].lstrip())
+            c.drawString(400, h - 350, 'Rs.' + details['amt1'])
+        if details['item2'] != 'None':
+            c.drawString(100, h - 375, details['item2'].lstrip())
+            c.drawString(400, h - 375, 'Rs.' + details['amt2'])
+        if details['item3'] != 'None':
+            c.drawString(100, h - 400, details['item3'].lstrip())
+            c.drawString(400, h - 400, 'Rs.' + details['amt3'])
+        if details['item4'] != 'None':
+            c.drawString(100, h - 425, details['item4'].lstrip())
+            c.drawString(400, h - 425, 'Rs.' + details['amt4'])
+        if details['item5'] != 'None':
+            c.drawString(100, h - 450, details['item5'].lstrip())
+            c.drawString(400, h - 450, 'Rs.' + details['amt5'])
+        if details['item6'] != 'None':
+            c.drawString(100, h - 475, details['item6'].lstrip())
+            c.drawString(400, h - 475, 'Rs.' + details['amt6'])
+        if details['item7'] != 'None':
+            c.drawString(100, h - 500, details['item7'].lstrip())
+            c.drawString(400, h - 500, 'Rs.' + details['amt7'])
+        if details['item8'] != 'None':
+            c.drawString(100, h - 525, details['item8'].lstrip())
+            c.drawString(400, h - 525, 'Rs.' + details['amt8'])
+        c.line(55, h - 580, 555, h - 580)
+        c.drawString(100, h - 600, "Total")
+        c.drawString(400, h - 600, 'Rs.' + details['total'])
+        c.line(55, h - 610, 555, h - 610)
+        c.setFont('Helvetica-Bold', 12)
+        c.drawString(400, h - 775, "Authority Signature")
+        c.setFont('Helvetica', 10)
+        c.drawString(55, h - 790, "printedby: " + details['user'])
+        c.showPage()
+        c.save()
+
+    def print_dailycashreport(self,details):
+        print(details[0])
+        print(details[1])
+
+
+
 
 

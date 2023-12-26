@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   <script>
+        $(document).ready(function(){
+        var x = "{{error}}";
+        if (x.length >0){
+            $(".error-popup").show();
+        }
+         $(".btncancel").click(function(){
+        $(".error-popup").hide();
+        });
+   });
+   </script>
 </head>
 <body>
+<div class="error-popup" id="myForme">
+     <form action="/printreceipt" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<h3>{{error}}</h3>
+     </form>
+</div>
+
 <div class = 'buttonsbar'>
 <form action="/dashboard" method="get">
     <button style="left:30px;width: 100px;"  class="button-all">Home</button>
@@ -16,48 +35,54 @@
 <form>
 <div style="padding-left: 70px;" onsubmit="submit.disabled = true">
     <form name ='myForm' id ='myForm' method="post" action="">
-         <br><br>   <button id="submit" style="left:150px;width: 100px;"  class="button-all"  type="submit" formmethod='post' formaction="/print_dissum" >Submit</button><br><br><br><br>
+         <br><br>   <button id="submit" style="left:150px;width: 100px;"  class="button-all"  type="submit" formmethod='post' formaction="/print_dissum" >Print</button><br><br><br><br>
             <table id = "table_data1"  style="width:65%">
+  <tr id="TR0" >
+    <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>IPD NO :</b></td>
+    <td class="col" style="font-size: 13px" >
+        <input style="width: 500px;" type="text" id="ipdno" name="ipdno" value="{{ipd_details[0]}}" readonly >
+    </td>
+  </tr>
  <tr id="TR1" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>PATIENT NAME :</b></td>
     <td class="col" style="font-size: 13px" >
-        <input style="width: 500px;" type="text" id="pname" name="pname" placeholder="Patient Name.." required size="50">
+        <input style="width: 500px;" type="text" id="pname" name="pname" value="{{ipd_details[1]}}" readonly >
     </td>
   </tr>
    <tr id="TR2" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>AGE :</b></td>
     <td class="col" style="font-size: 13px" >
-        <input style="width: 500px;"  type="text" id="age" name="age" placeholder="Age.." required>
+        <input style="width: 500px;"  type="text" id="age" name="age" placeholder="Age.." value="{{ipd_details[3]}}" readonly>
     </td>
   </tr>
 <tr id="TR3" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>SEX :</b></td>
     <td class="col" style="font-size: 13px" >
-    <input style="width: 500px;"  type="text" id="sex" name="sex" placeholder="Sex.."required>
+    <input style="width: 500px;"  type="text" id="sex" name="sex" placeholder="Sex.." value="{{ipd_details[5]}}" readonly>
     </td>
   </tr>
 <tr id="TR4" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>ROOM NO :</b></td>
     <td class="col" style="font-size: 13px" >
-       <input style="width: 500px;"  type="text" id="roomno" name="roomno" placeholder="Room No.." required>
+       <input style="width: 500px;"  type="text" id="roomno" name="roomno" placeholder="Room No.." value="{{ipd_details[7]}}" readonly>
     </td>
   </tr>
 <tr id="TR5" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DATE OF ADMISSION :</b></td>
     <td class="col" style="font-size: 13px" >
-       <input style="width: 500px;"  type="date" id="doa" name="doa"  required>
+       <input style="width: 500px;"  type="text" id="doa" name="doa"  value="{{ipd_details[2]}}" readonly>
     </td>
   </tr>
  <tr id="TR6" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>DATE OF DISCHARGE :</b></td>
     <td class="col" style="font-size: 13px" >
-       <input style="width: 500px;"  type="date" id="dod" name="dod"  required>
+       <input style="width: 500px;"  type="text" id="dod" name="dod"  value="{{ipd_details[19]}}" readonly>
     </td>
   </tr>
   <tr id="TR7" >
     <td class="col" style="font-size: 13px" ><span  style="color:red"> *</span><b>CONSULTED DOCTOR :</b></td>
     <td class="col" style="font-size: 13px" >
-       <input style="width: 500px;"  type="text" id="cdr" name="cdr" placeholder="Consulted Doctor.." required>
+       <input style="width: 500px;"  type="text" id="cdr" name="cdr" value="{{ipd_details[12]}}" readonly>
     </td>
   </tr>
     <tr id="TR8" >

@@ -343,16 +343,24 @@ class database:
         conn.close()
 
     def execute(self,query):
+        print(query)
         conn = sqlite3.connect(dbpath)
         c = conn.cursor()
-        try:
-            c.execute(query)
-            data = c.fetchall()
-            if not data:
-                data = "Rows affected "+ str(c.rowcount)
-        except sqlite3.Error as e:
-            print("ERROR - ", e)
-            data = "ERROR - " +str(e)
+        c.execute(query)
+        data = c.fetchall()
+        if not data:
+            data = "Rows affected " + str(c.rowcount)
+        conn.commit()
+        conn.close()
+        return data
+
+    def execute_insert(self,query,val):
+        conn = sqlite3.connect(dbpath)
+        c = conn.cursor()
+        c.execute(query, val)
+        data = c.fetchall()
+        if not data:
+            data = "Rows affected " + str(c.rowcount)
         conn.commit()
         conn.close()
         return data
@@ -432,10 +440,10 @@ dt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 # db.droptable('appointments')
 # print(db.execute("select count(*) from patientdetails")[0][0])
 # db.createlicense_table('license')
-# db.droptable('license')
+#db.droptable('license')
 # db.droptable('doctors')
 # db.createdoctor_table('doctors')
-# db.insertdoctor('All','null','null','null','null','null','null',dt)
-# db.droptable('staffs')
+# db.insertdoctor('Dr.Vasantharaj','MS','Orthopedics','null','null','null','null',dt)
+# db.droptable('admission')
 # db.createstaff_table('staffs')
 # db.insertstaffs('KHM000','user001','30','Male','office assistant','Dharmapuri','9876543210','2023-11-09','na',dt)

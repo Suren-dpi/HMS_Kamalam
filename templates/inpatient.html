@@ -5,23 +5,124 @@
     <title>outpatient</title>
   <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+        $(document).ready(function(){
+        var x = "{{error}}";
+        $(".error-popup").hide();
+         $(".form-popup2").hide();
+         $(".form-popup3").hide();
+        $(".btncancel").click(function(){
+        $(".error-popup").hide();
+        $(".form-popup1").hide();
+        $(".form-popup2").hide();
+        $(".form-popup3").hide();
+        });
+        if (x.length >0){
+            $(".error-popup").show();
+        }
+         $("#printreceipt").click(function(){
+         $(".form-popup1").show();
+        });
+        $("#ipdbill").click(function(){
+         $(".form-popup2").show();
+        });
+        $("#dissummary").click(function(){
+         $(".form-popup3").show();
+        });
 
+});
+ </script>
 </head>
 <body>
+
+
+<div class="error-popup" >
+     <form class="form-container">
+<span class="btncancel">&#10006;</span>
+<h3>{{error}}</h3>
+     </form>
+</div>
+
+
+
 <div class = 'buttonsbar'>
 <form action="/dashboard" method="get">
     <button style="left:30px;width: 100px;"  class="button-all">Home</button>
 </form>
+<form action="/ipd_add" method="get">
+    <button style="left:140px;width: 100px;"  class="button-all">Admission</button>
+</form>
+<button style="left:250px;width: 150px;" id='printreceipt' class="button-all">Admission Form</button>
+
+ <button style="left:410px;width: 130px;" id='ipdbill' class="button-all">Discharge Bill</button>
+
+<!--<form action="/dissum" method="get">-->
+<!--    <button style="left:550px;width: 180px;"  class="button-all">Discharge Summary</button>-->
+<!--</form>-->
+<button style="left:550px;width: 180px;" id='dissummary'  class="button-all">Discharge Summary</button>
+
+
+
 <form action="/logout" method="get">
-   <button style="left:330px;width: 100px;"  class="button-all"  >logout</button>
+   <button style="left:740px;width: 80px;"  class="button-all"  >logout</button>
 </form>
 
-<form action="/dissum" method="get">
-    <button style="left:140px;width: 180px;"  class="button-all">Discharge Summary</button>
-</form>
 
-<!--<button class="open-button" onclick="openForm()">Admission</button>-->
+
+
+
 </div>
+
+<div class="deflist">{{data|safe}}</div>
+
+<div class="form-popup1" id="myForm1">
+     <form action="/printipdform" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+         <table id = "table_data2" style="width:100%">
+ <tr id="Tk1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>IPD No :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="ipdno" placeholder="ipdno" name="ipdno" required size="9">
+    </td>
+  </tr>
+</table><br>
+         <button class="btn">Print</button>
+     </form>
+</div>
+
+<div class="form-popup2" id="myForm2">
+     <form action="/dischargebill" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+         <table id = "table_data3" style="width:100%;">
+ <tr id="TDS1" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>IPD No :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="ipdno1" placeholder="ipdno" name="ipdno1" required>
+    </td>
+  </tr>
+ </table><br>
+         <button class="btn">Print</button>
+     </form>
+</div>
+
+<!--Discharge Summary-->
+<div class="form-popup3" id="myForm3">
+     <form action="/dissum" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+         <table id = "table_data4" style="width:100%;">
+ <tr id="TDS4" >
+    <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>IPD No :</b></td>
+    <td class="col" style="font-size: 20px" >
+        <input style="width: 200px;" type="text" id="ipdno2" placeholder="ipdno" name="ipdno2" required>
+    </td>
+  </tr>
+ </table><br>
+         <button class="btn">Print</button>
+     </form>
+</div>
+
+
+
 <div class="copyright">
     <p>©primosoftwaresolutions</p>
 </div>

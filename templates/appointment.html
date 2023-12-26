@@ -7,8 +7,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
    <script>
         $(document).ready(function(){
+        var x = "{{error}}";
         $(".form-popup").hide();
         $(".form-popup1").hide();
+        if (x.length >0){
+            $(".error-popup").show();
+        }
         $("#bookappoinment").click(function(){
         $(".form-popup").show();
         $(".form-popup1").hide();
@@ -16,6 +20,7 @@
         $(".btncancel").click(function(){
         $(".form-popup").hide();
         $(".form-popup1").hide();
+        $(".error-popup").hide();
         });
         $("#printreceipt").click(function(){
         $(".form-popup").hide();
@@ -23,8 +28,26 @@
         });
 });
  </script>
+        <script>
+        $(document).ready(function(){
+        var numbers = $('.drs').text();
+        var numbersArray =numbers.split(',');
+        var option = '';
+        for (var i=0;i<numbersArray.length;i++){
+            newString = numbersArray[i].replace(/[^0-9a-zA-Z.@]/g, '');
+            option += '<option value="'+ newString + '">' + newString + '</option>';
+        }
+        $('#dr').append(option);
+});
+ </script>
 </head>
 <body >
+<div class="error-popup" id="myForme">
+     <form action="/printreceipt" method="post" class="form-container">
+<span class="btncancel">&#10006;</span>
+<h3>{{error}}</h3>
+     </form>
+</div>
 <div class = 'buttonsbar'>
 <form action="/dashboard" method="get">
     <button style="left:30px;width: 100px;"  class="button-all" >Home</button>
@@ -32,14 +55,13 @@
 <form action="/logout" method="get">
    <button style="left:450px;width:100px;"  class="button-all"  >logout</button>
 </form>
-<button style="left:140px;width: 130px;" id='printreceipt' class="button-all">Print Recepit</button>
-<button style="left:280px;width: 160px;"  id='bookappoinment' class="button-all" onclick="openForm()">Book Appoinment</button>
+<button  style="left:140px;width: 160px;" id='bookappoinment' class="button-all" onclick="openForm()">Book Appoinment</button>
+<button style="left:310px;width: 130px;" id='printreceipt' class="button-all">Print Recepit</button>
 </div>
 
-<div class = "error-popup">
-    <h5>asdfghjkl</h5>
+<div class = "drs" hidden>
+    <h5>{{drs}}</h5>
 </div>
-
     <div class="form-popup" id="myForm">
   <form action="/createappointment" method="post" class="form-container">
 <span class="btncancel">&#10006;</span>
@@ -69,28 +91,25 @@
      <tr id="TR4" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Guardian :</b></td>
     <td class="col" style="font-size: 20px" >
-        <input style="width: 200px;" type="text" id="guardian" placeholder="Enter guardian" name="guardian" required size="100">
+        <input style="width: 200px;" type="text" id="guardian" placeholder="Enter guardian" name="guardian" required maxlength="50">
     </td>
   </tr>
   <tr id="TR5" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Address :</b></td>
     <td class="col" style="font-size: 20px" >
-        <input style="width: 200px;" type="text" id="address" placeholder="Enter address" name="address" required size="50">
+        <input style="width: 200px;" type="text" id="address" placeholder="Enter address" name="address" required maxlength="50">
     </td>
   </tr>
    <tr id="TR6" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Phone :</b></td>
     <td class="col" style="font-size: 20px" >
-        <input style="width: 200px;" type="text" id="phone" placeholder="Enter phone" name="phone" required size="10">
+        <input style="width: 200px;" type="text" id="phone" placeholder="Enter phone" name="phone" required maxlength="10">
     </td>
   </tr>
    <tr id="TR7" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Doctor :</b></td>
     <td class="col" style="font-size: 20px" >
      <select style="width: 210px;height:20px" id="dr" name="dr">
-            <option value="Dr.Kamalam">Dr.Kamalam</option>
-            <option value="Dr.Subramaniyam">Dr.Subramaniyam</option>
-            <option value="Dr.Sugasree">Dr.Sugasree</option>
         </select>
     </td>
   </tr>
@@ -107,15 +126,16 @@
    <tr id="TR9" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Consulting Fee :</b></td>
     <td class="col" style="font-size: 20px" >
-        <input style="width: 200px;" type="text" id="consfee" name="consfee" required size="10">
+        <input style="width: 200px;" type="text" id="consfee" name="consfee" required >
     </td>
   </tr>
        <tr id="TR10" >
     <td class="col" style="font-size: 15px" ><span  style="color:red"> *</span><b>Medical History :</b></td>
     <td class="col" style="font-size: 20px" >
-        <input style="width: 200px;" type="text" id="medhist" name="medhist" required size="50">
+        <input style="width: 200px;" type="text" id="medhist" name="medhist" required maxlength="50">
     </td>
-  </tr> <br>
+
+
  </table><br><br>
        <button type="submit" class="btn">Save</button>
 <!--      <button type="button" class="btncancel" onclick="closeForm()">Close</button>-->
@@ -139,7 +159,7 @@
 <!-- <div class="myBox">-->
 <!--    <div  align="left" class="appointments">{{data|safe}}</div>-->
 <!--</div>-->
-<div class="test">{{data|safe}}</div>
+<div class="deflist">{{data|safe}}</div>
 <div class="copyright">
     <p>©primosoftwaresolutions</p>
 </div>

@@ -2,15 +2,7 @@
 <head>
 <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<!--   <script>-->
-<!--        $(document).ready(function(){-->
-<!--        $(".submit").click(function(){-->
-<!--        $(".loading").show();-->
-<!--        $(".login-container").hide();-->
-<!--        $(".hr_mainpage").hide();-->
-<!--        });-->
-<!--});-->
-<!-- </script>-->
+
 </head>
 <body>
 <div class="licenseinfo">
@@ -31,7 +23,12 @@
 <!--  </span>-->
   </div>
 </form>
-
+<!--<div class="error-popup" id="myForm1">-->
+<!--     <form class="form-container">-->
+<!--<span class="btncancel">&times;</span><br>-->
+<!--<label style="color:Red;">Your license going to expire on {{licenseinfo}}</label>-->
+<!--     </form>-->
+<!--</div>-->
 
 <img  hidden id = "loading" class = "loading" src="{{ url_for('static', path='images/loading.gif') }}"/>
 <div class="copyright">
