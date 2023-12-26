@@ -1,5 +1,13 @@
 CREATE TABLE admission (ipdno text NOT NULL PRIMARY KEY,patient text NOT NULL ,doa text NOT NULL ,age text NOT NULL,dob text NOT NULL,sex text NOT NULL, bloodgroup text NOT NULL, roomno text NOT NULL,guardian text NOT NULL ,mobileno text NOT NULL ,maritialstatus text NOT NULL ,address text NOT NULL ,consultingdr text NOT NULL ,department text NOT NULL ,referreddr text NULL,presentcomplaint text NULL,familyhistory text NULL ,remarks text NULL,payment text NULL, dod text NULL,date text NOT NULL )
 
+CREATE TABLE appointments ( Tokenno text NOT NULL,Receiptno text NOT NULL PRIMARY KEY,Date text NOT NULL, Time text NOT NULL, Patient text NOT NULL ,Age text NOT NULL,Sex real NOT NULL, Guardian text NOT NULL , Address text NOT NULL, Phone text NOT NULL, Doctor text NOT NULL, Department text NOT NULL,  Consultationfee NUMERIC  NOT NULL, Medicalhistory text NOT NULL)
+
+CREATE TABLE doctors (doctor_name text NOT NULL PRIMARY KEY,qualification text NOT NULL ,department text NOT NULL ,joining_date text NOT NULL,releving_date text NOT NULL,  address text NOT NULL,contact_no text NOT NULL, lastupdated text NOT NULL)
+
+CREATE TABLE ipd_bills (ipdno text NOT NULL PRIMARY KEY, reason text NOT Null, bill_amount text NOT NULL, date text NOT NULL, time text NOT NULL)
+
 CREATE TABLE ipd_category (itemno text NOT NULL PRIMARY KEY,Category text NOT NULL )
 
-CREATE TABLE appointments (Tokenno text NOT NULL,Receiptno text NOT NULL PRIMARY KEY,Date text NOT NULL,Time text NOT NULL,               Patient text NOT NULL ,Age text NOT NULL, Sex real NOT NULL, Guardian text NOT NULL , Address text NOT NULL, Phone text NOT NULL, Doctor text NOT NULL, Department text NOT NULL,Consultationfee NUMERIC  NOT NULL, Medicalhistory text NOT NULL)
+CREATE TABLE license (license_startdate text NOT NULL,license_enddate text NOT NULL , license_key text NOT NULL PRIMARY KEY, system_key text NOT NULL, system_info text NOT NULL, key_info text NOT NULL, customer_name text NOT NULL, customer_address text NOT NULL, customer_contactno text NOT NULL,customer_email text NOT NULL, company_name text NOT NULL, company_address text NOT NULL, company_contactno text NOT NULL, company_email text NOT NULL)
+
+CREATE TABLE users (empid int NOT NULL PRIMARY KEY, username text NOT NULL ,password varchar(10) NOT NULL, designation varchar(15) NOT NULL)
