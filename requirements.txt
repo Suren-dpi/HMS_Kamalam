@@ -1,0 +1,10 @@
+fastapi==0.108.0
+reportlab==4.0.8
+pandas==2.1.4
+cryptography==41.0.7
+fastapi-login==1.9.2
+uvicorn==0.25.0
+passlib==1.7.4
+python-jose==3.3.0
+python-multipart==0.0.6
+jinja2==3.1.2

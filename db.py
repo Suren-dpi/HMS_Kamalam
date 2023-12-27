@@ -207,9 +207,7 @@ class database:
         c = conn.cursor()
         print("Update TABLE")
         # run.logwriter("INSERT TABLE")
-        print(license_startdate)
         sql = "UPDATE license  set license_startdate = '{1}', license_enddate = '{2}' , license_key = '{3}' , system_key = '{4}', key_info = '{5}' where system_info = '{0}'".format(systeminfo,license_startdate, license_enddate, license_key,system_key,key_info)
-        print(sql)
         try:
             c.execute(sql)
             print("patient data Inserted to db")
@@ -343,7 +341,6 @@ class database:
         conn.close()
 
     def execute(self,query):
-        print(query)
         conn = sqlite3.connect(dbpath)
         c = conn.cursor()
         c.execute(query)
