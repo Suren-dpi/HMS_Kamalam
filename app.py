@@ -433,11 +433,10 @@ async def reports(request: Request,currentuser: User=Depends(manager)):
 async def cashreport(request: Request,date: str = Form(...),currentuser: User=Depends(manager)):
     try:
         r2 = pd.read_sql_query(
-            "select Date,Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date = '{0}' group by Date,Doctor;".format(
+            "select Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,CAST (SUM(Consultationfee) AS VARCHAR ) as TotalFee from appointments where Date = '{0}' group by Doctor;".format(
                 date), conn)
         r3 = pd.read_sql_query(
-            "select date as Date,consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date = '{0}' and dod !='' group by Date,consultingdr;".format(
-                date), conn)
+            "select consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,CAST (SUM(payment) AS VARCHAR ) as TotalPayments from admission where dod like '{0}' group by consultingdr;".format(str(date)+'%'), conn)
         r2 = r2.style.hide(axis='index')
         r3 = r3.style.hide(axis='index')
         return templates.TemplateResponse('DCR.html',
@@ -451,13 +450,15 @@ async def cashreport(request: Request,date: str = Form(...),currentuser: User=De
 async def monthlycashreport(request: Request,month: str = Form(...),currentuser: User=Depends(manager)):
     try:
         r2 = pd.read_sql_query(
-            "select Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
+            "select Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,CAST (SUM(Consultationfee) AS VARCHAR ) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
                 month + '%'), conn)
         r3 = pd.read_sql_query(
-            "select consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date like '{0}' group by consultingdr;".format(
+            "select consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,CAST (SUM(payment) AS VARCHAR ) as TotalPayments from admission where dod like '{0}' group by consultingdr;".format(
                 month + '%'), conn)
+
         r2 = r2.style.hide(axis='index')
         r3 = r3.style.hide(axis='index')
+
         return templates.TemplateResponse('MCR.html',
                                           {'request': request, 'month': month, 'data': r2.to_html(),
                                            'data1': r3.to_html()})
@@ -469,10 +470,10 @@ async def monthlycashreport(request: Request,month: str = Form(...),currentuser:
 async def yearlycashreport(request: Request,year: str = Form(...),currentuser: User=Depends(manager)):
     try:
         r2 = pd.read_sql_query(
-            "select Doctor,COUNT(Receiptno) as TotalOutPatients,SUM(Consultationfee) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
+            "select Doctor as Consulting_Dr,COUNT(Receiptno) as TotalOutPatients,CAST (SUM(Consultationfee) AS VARCHAR ) as TotalFee from appointments where Date like '{0}' group by Doctor;".format(
                 year + '%'), conn)
         r3 = pd.read_sql_query(
-            "select COUNT(ipdno) as TotalInPatients,SUM(payment) as TotalPayments from admission where date like '{0}'".format(
+            "select consultingdr as Consulting_Dr,COUNT(ipdno) as TotalInPatients,CAST (SUM(payment) AS VARCHAR ) as TotalPayments from admission where dod like '{0}' group by consultingdr;".format(
                 year + '%'), conn)
         r2 = r2.style.hide(axis='index')
         r3 = r3.style.hide(axis='index')
@@ -606,7 +607,7 @@ async def dischargebill(request: Request,ipdno1:str = Form(...),currentuser: Use
     try:
         ipd_details = list(sqldb.execute('''select * from admission where ipdno = '{0}' '''.format(ipdno1))[0])
         print(ipd_details)
-        category = sqldb.execute("select Category from ipd_category")
+        category = sqldb.execute("select Category from ipd_bills")
         cat1 = []
         for x in range(len(category)):
             cat1.append(category[x][0])
@@ -628,7 +629,7 @@ async def print_dischargebill(request: Request,currentuser: User=Depends(manager
             dt = x.split("|")
             dict_data[dt[0]] = dt[1]
         dict_data['user'] = currentuser
-        print(dict_data)
+        print(type(dict_data['total']))
         sqldb.execute('''UPDATE admission set dod = '{0}', payment = '{1}' where ipdno = '{2}' '''.format(dict_data['dod'],dict_data['total'],dict_data['ipdno']))
         bill.print_discharge_bill(dict_data)
         # To view the file in the browser, use "inline" for the media_type
@@ -864,6 +865,28 @@ async def view_user(request: Request):
         print(str(e))
         return str(e)
 
+#others
+@app.post('/add_doctors', response_class=HTMLResponse)
+async def create_user(request: Request, doctor_name: str = Form(...), qualification: str = Form(...),department: str = Form(None), joining_date: str = Form(None),releving_date: str = Form(None),address: str = Form(None),contact_no: str = Form(None)):
+    try:
+        date = datetime.now().strftime('%Y-%m-%d')
+        out = sqldb.execute("INSERT INTO doctors (doctor_name,qualification,department,joining_date,releving_date,address,contact_no,lastupdated) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')".format(doctor_name,qualification,department,joining_date,releving_date,address,contact_no,date))
+        return json.dumps(out,indent=4)
+    except BaseException as e:
+        print(str(e))
+        return str(e)
+
+@app.post('/add_ipdbills', response_class=HTMLResponse)
+async def create_user(request: Request, category: str = Form(...)):
+    try:
+        count = sqldb.execute("select count(*) from ipd_bills ")[0][0]
+        count += 1
+        print(count)
+        out = sqldb.execute("INSERT INTO ipd_bills (itemno,category) VALUES ('{0}','{1}')".format(str(count).zfill(3),category))
+        return json.dumps(out,indent=4)
+    except BaseException as e:
+        print(str(e))
+        return str(e)
 
 if __name__ == "__main__":
     conn = conf.get_config()

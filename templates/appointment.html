@@ -34,7 +34,7 @@
         var numbersArray =numbers.split(',');
         var option = '';
         for (var i=0;i<numbersArray.length;i++){
-            newString = numbersArray[i].replace(/[^0-9a-zA-Z.@]/g, '');
+            newString = numbersArray[i].replace(/[^0-9a-zA-Z.@ ]/g, '');
             option += '<option value="'+ newString + '">' + newString + '</option>';
         }
         $('#dr').append(option);

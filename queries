@@ -6,8 +6,14 @@ CREATE TABLE doctors (doctor_name text NOT NULL PRIMARY KEY,qualification text N
 
 CREATE TABLE ipd_bills (ipdno text NOT NULL PRIMARY KEY, reason text NOT Null, bill_amount text NOT NULL, date text NOT NULL, time text NOT NULL)
 
-CREATE TABLE ipd_category (itemno text NOT NULL PRIMARY KEY,Category text NOT NULL )
+CREATE TABLE ipd_bills (itemno text NOT NULL PRIMARY KEY,Category text NOT NULL )
 
 CREATE TABLE license (license_startdate text NOT NULL,license_enddate text NOT NULL , license_key text NOT NULL PRIMARY KEY, system_key text NOT NULL, system_info text NOT NULL, key_info text NOT NULL, customer_name text NOT NULL, customer_address text NOT NULL, customer_contactno text NOT NULL,customer_email text NOT NULL, company_name text NOT NULL, company_address text NOT NULL, company_contactno text NOT NULL, company_email text NOT NULL)
 
 CREATE TABLE users (empid int NOT NULL PRIMARY KEY, username text NOT NULL ,password varchar(10) NOT NULL, designation varchar(15) NOT NULL)
+
+
+
+INSERT into doctors (doctor_name,qualification,department,joining_date,releving_date,address,contact_no,lastupdated) values ('Dr,Kamalam MBBS','MBBS','','','','','','')
+
+insert into ipd_bills (itemno,Category) values ('002','Nursing Charges')
