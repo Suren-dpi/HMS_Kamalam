@@ -31,7 +31,7 @@ class receipt:
         # c.line(50, h - 135, 550, h - 135)
         # c.drawText(head)
         c.line(55, h - 50, 555, h - 50)
-        c.drawImage('kh_head.png', 100, h - 130, width=400, height=75)
+        c.drawImage('kh_head.png', 130, h - 130, width=350, height=75)
         c.line(55, h - 130, 555, h - 130)
         op = c.beginText(225, h - 155)
         op.setFont("Helvetica-Bold", 13)
@@ -62,7 +62,7 @@ class receipt:
 
 
         c.line(55, h - 440, 555, h - 440)
-        c.drawImage('kh_head.png', 100, h - 520, width=400, height=75)
+        c.drawImage('kh_head.png', 130, h - 520, width=350, height=75)
         c.line(55, h - 520, 555, h - 520)
 
         op11 = c.beginText(225, h - 555)
@@ -104,7 +104,7 @@ class receipt:
         # print(details)
         w, h = A4
         c = canvas.Canvas("dischargesummary.pdf", pagesize=A4)
-        c.drawImage('kh_head.png', 75, 750, width=400, height=75)
+        c.drawImage('kh_head.png', 125, 750, width=350, height=75)
         c.setFont('Helvetica-Bold', 10)
         c.drawString(55, h - 100, 'DISCHARGE SUMMARY/TREATMENT SUMMARY/DISCHARGE AT REQUEST/AGAINST MEDICAL ADVISE' )
         c.line(55, h - 105, 555, h - 105)
@@ -263,7 +263,7 @@ class receipt:
         # print(details['user'])
         w, h = A4
         c = canvas.Canvas("admissionform.pdf", pagesize=A4)
-        c.drawImage('kh_head.png', 75, 750, width=400, height=75)
+        c.drawImage('kh_head.png', 125, 750, width=350, height=75)
         c.setFont('Helvetica-Bold', 16)
         c.drawString(200, h - 125, 'IN PATIENT ADMISSION FORM')
         c.line(55, h - 130, 555, h - 130)
@@ -350,7 +350,7 @@ class receipt:
         # print(details)
         w, h = A4
         c = canvas.Canvas("dischargebill.pdf", pagesize=A4)
-        c.drawImage('kh_head.png', 75, 750, width=400, height=75)
+        c.drawImage('kh_head.png', 125, 750, width=350, height=75)
         c.setFont('Helvetica-Bold', 16)
         c.drawString(240, h - 120, 'DISCHARGE BILL')
         c.line(55, h - 130, 555, h - 130)
@@ -438,10 +438,6 @@ class receipt:
         c.drawString(55, h - 790, "printedby: " + details['user'])
         c.showPage()
         c.save()
-
-    def print_dailycashreport(self,details):
-        print(details[0])
-        print(details[1])
 
 
 
